@@ -19,15 +19,15 @@ def isValid(level, tag):
 def individuals(line):
     if line[3] == 'INDI':
         inside = False
-        for x in indList:
-            if line[1] is x:
+        while not inside:
+            if line[1] in indList:
                 inside = True
             if inside is False:
                 indList.append(line[1])
     if line[1] == 'NAME':
         inside = False
-        for x in indList:
-            if line[3] is x:
+        while not inside:
+            if line[3] in indList:
                 inside = True
             if inside is False:
                 indList.append(line[3])
