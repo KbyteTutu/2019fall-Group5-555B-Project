@@ -1,10 +1,10 @@
-#!/usr/bin/python
+﻿#!/usr/bin/python
 # -*- coding: UTF-8 -*-
-from gedcom.element.individual import IndividualElement
-from gedcom.parser import Parser
 
 Valid = {'INDI': 0, 'NAME': 1, 'SEX': 1, 'BIRT': 1, 'DEAT': 1, 'FAMC': 1, 'FAMS': 1, 'FAM': 0,
          'MARR': 1, 'HUSB': 1, 'WIFE': 1, 'CHIL': 1, 'DIV': 1, 'DATE': 2, 'HEAD': 0, 'TRLR': 0, 'NOTE': 0}
+
+indList = []
 
 
 def isValid(level, tag):
@@ -15,6 +15,22 @@ def isValid(level, tag):
             return "N"
     else:
         return "N"
+
+def individuals(line):
+    if line[3] == 'INDI':
+        inside = False
+        for x in indList:
+            if line[1] is x:
+                inside = True
+            if inside is False:
+                indList.append(line[1])
+    if line[1] == 'NAME':
+        inside = False
+        for x in indList:
+            if line[3] is x:
+                inside = True
+            if inside is False:
+                indList.append(line[3])
 
 
 def readGed(file):
@@ -28,9 +44,11 @@ def readGed(file):
             # 读取每行的数据并用切片存入list
             linedata = [line[0:1], line[2:line.index(" ", 2)], "Valid", line[line.index(" ", 2) + 1:-1]]
             linedata[2] = isValid(linedata[0], linedata[1])
+            individuals(linedata)
             # 输出
             print("-->" + line[:-1])
             print("<--" + linedata[0] + "|" + linedata[1] + "|" + linedata[2] + "|" + linedata[3])
+        print(*indList, sep = '\n')
     finally:
         myGed.close()
 
