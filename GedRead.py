@@ -5,7 +5,7 @@ Valid = {'INDI': 0, 'NAME': 1, 'SEX': 1, 'BIRT': 1, 'DEAT': 1, 'FAMC': 1, 'FAMS'
          'MARR': 1, 'HUSB': 1, 'WIFE': 1, 'CHIL': 1, 'DIV': 1, 'DATE': 2, 'HEAD': 0, 'TRLR': 0, 'NOTE': 0}
 
 indList = []
-
+indLength = 10000
 
 def isValid(level, tag):
     if tag in Valid:
@@ -17,21 +17,22 @@ def isValid(level, tag):
         return "N"
 
 def individuals(line):
-    if line[3] == 'INDI':
-        inside = False
-        while not inside:
-            if line[1] in indList:
-                inside = True
-            if inside is False:
-                indList.append(line[1])
-    if line[1] == 'NAME':
-        inside = False
-        while not inside:
-            if line[3] in indList:
-                inside = True
-            if inside is False:
-                indList.append(line[3])
-
+    if len(indList) <= indLength:
+        if line[3] == 'INDI':
+            inside = False
+            while not inside:
+                if line[1] in indList:
+                    inside = True
+                if inside is False:
+                    indList.append(line[1])
+        if line[1] == 'NAME':
+            inside = False
+            while not inside:
+                if line[3] in indList:
+                    inside = True
+                if inside is False:
+                    indList.append(line[3]) 
+   
 
 def readGed(file):
     try:
