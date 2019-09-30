@@ -1,11 +1,13 @@
 ﻿#!/usr/bin/python
 # -*- coding: UTF-8 -*-
 
+import sys
+
 Valid = {'INDI': 0, 'NAME': 1, 'SEX': 1, 'BIRT': 1, 'DEAT': 1, 'FAMC': 1, 'FAMS': 1, 'FAM': 0,
          'MARR': 1, 'HUSB': 1, 'WIFE': 1, 'CHIL': 1, 'DIV': 1, 'DATE': 2, 'HEAD': 0, 'TRLR': 0, 'NOTE': 0}
 
 indList = []
-indLength = 10000
+indLength = 0
 
 def isValid(level, tag):
     if tag in Valid:
@@ -17,7 +19,7 @@ def isValid(level, tag):
         return "N"
 
 def individuals(line):
-    if len(indList) <= indLength:
+    if indLength <= 5000:
         if line[3] == 'INDI':
             inside = False
             while not inside:
@@ -31,7 +33,10 @@ def individuals(line):
                 if line[3] in indList:
                     inside = True
                 if inside is False:
-                    indList.append(line[3]) 
+                    indList.append(line[3])
+                    indLength = ++indLength
+    else:
+        print("Maximum amount of individuals stored!\n")
    
 
 def readGed(file):
@@ -49,10 +54,17 @@ def readGed(file):
             # 输出
             print("-->" + line[:-1])
             print("<--" + linedata[0] + "|" + linedata[1] + "|" + linedata[2] + "|" + linedata[3])
-        print(*indList, sep = '\n')
+        #print(*indList, sep = '\n')
+        while i < indLength:
+            print(indList[i] + " " + indList[i+1] + "\n")
+            i = i + 2
     finally:
         myGed.close()
 
 
 if __name__ == '__main__':
-    readGed("Group 5 GED.ged")
+    if len(sys.argv) != 2:
+        print 
+        # Usage python GedRead.py firstfile
+        sys.exit(1)
+    readGed(sys.argv[1])
