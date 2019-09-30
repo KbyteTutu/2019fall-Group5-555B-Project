@@ -32,8 +32,11 @@ def individuals(line):
             while not inside:
                 if line[3] in indList:
                     inside = True
+                    # Remove the ID from the list if the name is not being added
+                    indList.pop()
                 if inside is False:
                     indList.append(line[3])
+                    # Increase counter after successful insert of an ID and Name
                     indLength = ++indLength
     else:
         print("Maximum amount of individuals stored!\n")
@@ -56,6 +59,7 @@ def readGed(file):
             print("<--" + linedata[0] + "|" + linedata[1] + "|" + linedata[2] + "|" + linedata[3])
         #print(*indList, sep = '\n')
         while i < indLength:
+            # Print layout: "ID Name"
             print(indList[i] + " " + indList[i+1] + "\n")
             i = i + 2
     finally:
