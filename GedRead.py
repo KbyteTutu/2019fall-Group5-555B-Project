@@ -78,7 +78,7 @@ def getFamInfoFromBlocks(blocks):
                 spouse.husbandN = person.name
             if  person.indi == spouse.wife:
                 spouse.wifeN = person.name
-        
+
 
 
 def isValid(level:"tag level", tag:"tag name") -> str:
@@ -96,7 +96,7 @@ def readGed(file):
         gedLines = myGed.readlines()
         gedLines.append("END END END")
         for line in gedLines:
-            #Do line cut and store the whole line 
+            #Do line cut and store the whole line
             line = line + " "
             linedata = [line[0:1], line[2:line.index(" ", 2)], "Valid", line[line.index(" ", 2) + 1:-1]]
             linedata[2] = isValid(linedata[0], linedata[1])
@@ -111,8 +111,12 @@ def readGed(file):
         print("=====Family=====")
         for j in famList:
             j.printInfo()
+    except:
+        print("Invalid file")
+        return 'invalid'
     finally:
         myGed.close()
+        return 'valid'
 
 
 
