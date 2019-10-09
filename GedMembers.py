@@ -9,8 +9,8 @@ class individual(object):
         self.name = args[0]
 
     def printInfo(self):
-        print("ID is:" + self.indi)
-        print("name is:" + self.name)
+        print("ID is: " + self.indi)
+        print("Name is: " + self.name)
 
 class family(object):
 
@@ -25,8 +25,8 @@ class family(object):
         self.wifeN = args[3]
 
     def printInfo(self):
-        print("Family ID is:" + self.famid)
+        print("Family ID is: " + self.famid)
         if self.husband != None:
-            print("Husband is:" + self.husbandN)
+            print("Husband is: " + self.husbandN)
         if self.wife != None:
-            print("Wife is:" + self.wifeN)
+            print("Wife is: " + self.wifeN)
