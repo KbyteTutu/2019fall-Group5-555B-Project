@@ -112,6 +112,8 @@ def readGed(file):
         print("=====Family=====")
         for j in famList:
             j.printInfo()
+
+        myGed.close()
     except:
         print("Invalid file")
         validity = 'invalid'
