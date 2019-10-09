@@ -92,6 +92,7 @@ def isValid(level:"tag level", tag:"tag name") -> str:
 
 def readGed(file):
     try:
+        validity = 'valid'
         myGed = open(file, "r")
         gedLines = myGed.readlines()
         gedLines.append("END END END")
@@ -113,10 +114,10 @@ def readGed(file):
             j.printInfo()
     except:
         print("Invalid file")
-        return 'invalid'
-    finally:
+        validity = 'invalid'
         myGed.close()
-        return 'valid'
+    finally:
+        return validity
 
 
 
