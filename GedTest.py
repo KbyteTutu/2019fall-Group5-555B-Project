@@ -2,7 +2,7 @@
 
 import unittest
 import GedRead
-#from pytest import ExitCode
+from pytest import ExitCode
 
 class test_ged(unittest.TestCase):
     def test_read_ged_invalidity(self):
@@ -40,6 +40,12 @@ class test_ged(unittest.TestCase):
         GedRead.famList = []
         GedRead.linedataList = [] 
         self.assertNotIn(GedRead.readGed('Over 5000 Ind 1000 Fam.ged'), 'Family ID is: @F1001')
+
+    def test_sameID_family(self):
+        GedRead.indList = []
+        GedRead.famList = []
+        GedRead.linedataList = []
+        self.assertNotIn(GedRead.readGed('SameIDFamily.ged'), 'Wife is: Tina /Bush/')
 
 if __name__ == '__main__':
     print('Running unit tests')
