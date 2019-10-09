@@ -2,7 +2,7 @@
 
 import unittest
 import GedRead
-from pytest import ExitCode
+#from pytest import ExitCode
 
 class test_ged(unittest.TestCase):
     def test_read_ged_invalidity(self):
@@ -21,31 +21,57 @@ class test_ged(unittest.TestCase):
         GedRead.indList = []
         GedRead.famList = []
         GedRead.linedataList = [] 
-        self.assertNotIn(GedRead.readGed('SameIDDIfferentName.ged'), 'Name is: Robert /Smith/')    
+        temp = []
+        GedRead.readGed('SameIDDIfferentName.ged')
+        for j in GedRead.indList:
+            if j.name is not None:
+                temp.append(j.name)
+        self.assertNotIn('Robert /Smith/', temp)    
 
     def test_sameName_individual(self):
         GedRead.indList = []
         GedRead.famList = []
         GedRead.linedataList = [] 
-        self.assertNotIn(GedRead.readGed('SameNameDifferentId.ged'), 'ID is: @I2@')
+        temp = []
+        GedRead.readGed('SameNameDifferentId.ged')
+        for j in GedRead.indList:
+            if j.indi is not None:
+                temp.append(j.indi)
+        self.assertNotIn('@I2@', temp)
 
-    def test_over_fivethousand_ind(self):
-        GedRead.indList = []
-        GedRead.famList = []
-        GedRead.linedataList = []
-        self.assertNotIn(GedRead.readGed('Over 5000 Ind 1000 Fam.ged'), 'Name is: 5001 /5001/')
-
-    def test_over_thousand_fam(self):
-        GedRead.indList = []
-        GedRead.famList = []
-        GedRead.linedataList = [] 
-        self.assertNotIn(GedRead.readGed('Over 5000 Ind 1000 Fam.ged'), 'Family ID is: @F1001')
+    #def test_over_fivethousand_ind(self):
+    #    GedRead.indList = []
+    #    GedRead.famList = []
+    #    GedRead.linedataList = []
+    #    temp = []
+    #    GedRead.readGed('Over 5000 Ind 1000 Fam.ged')
+    #    for j in GedRead.indList:
+    #        if j.name is not None:
+    #            temp.append(j.name)
+    #    self.assertNotIn('Name is: 5001 /5001/', temp)
+    #                                                       WARNING THE ABOVE AND BELOW TESTS WILL RUN FOR A WHILE UNCOMMENT THEM IF PREPARED TO WAIT   
+    #def test_over_thousand_fam(self):
+    #    GedRead.indList = []
+    #    GedRead.famList = []
+    #    GedRead.linedataList = []
+    #    temp = []
+    #    GedRead.readGed('Over 5000 Ind 1000 Fam.ged')
+    #    for j in GedRead.indList:
+    #        if j.indi is not None:
+    #            temp.append(j.indi)
+    #    self.assertNotIn('@F1001@', temp)
 
     def test_sameID_family(self):
         GedRead.indList = []
         GedRead.famList = []
         GedRead.linedataList = []
-        self.assertNotIn(GedRead.readGed('SameIDFamily.ged'), 'Wife is: Tina /Bush/')
+        temp = []
+        GedRead.readGed('SameIDFamily.ged')
+        for j in GedRead.famList:
+            if j.wifeN is not None:
+                temp.append(j.wifeN)
+        print(*temp, sep = '\n')
+        self.assertNotIn('Tina /Bush/', temp)
 
 if __name__ == '__main__':
     print('Running unit tests')
