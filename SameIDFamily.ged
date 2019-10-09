@@ -18,7 +18,7 @@
 1 BIRT
 2 DATE 12 NOV 1964
 1 FAMS @F1@
-1 FAMS @F2@
+1 FAMS @F1@
 1 FAMC @F3@
 0 @I3@ INDI
 1 NAME Edith /Schneider/
@@ -49,7 +49,7 @@
 1 SEX F
 1 BIRT
 2 DATE 11 MAY 1962
-1 FAMS @F2@
+1 FAMS @F1@
 1 FAMC @F5@
 0 @I6@ INDI
 1 NAME Kate /Smith/
@@ -59,7 +59,7 @@
 1 SEX F
 1 BIRT
 2 DATE 19 JUL 2002
-1 FAMC @F2@
+1 FAMC @F1@
 0 @I7@ INDI
 1 NAME Roger /Schneider/
 2 GIVN Roger
@@ -115,7 +115,7 @@
 1 SEX M
 1 BIRT
 2 DATE 19 JUL 2002
-1 FAMC @F2@
+1 FAMC @F1@
 0 @I13@ INDI
 1 NAME Joseph /Smith/
 2 GIVN Joseph
