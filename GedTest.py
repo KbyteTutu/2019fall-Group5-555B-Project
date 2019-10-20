@@ -2,6 +2,9 @@
 
 import unittest
 import GedRead
+from GedMembers import Valid
+from GedMembers import individual
+from GedMembers import family
 #from pytest import ExitCode
 
 class test_ged(unittest.TestCase):
@@ -61,17 +64,28 @@ class test_ged(unittest.TestCase):
     #            temp.append(j.indi)
     #    self.assertNotIn('@F1001@', temp)
 
-    def test_sameID_family(self):
-        GedRead.indList = []
-        GedRead.famList = []
-        GedRead.linedataList = []
-        temp = []
-        GedRead.readGed('SameIDFamily.ged')
-        for j in GedRead.famList:
-            if j.wifeN is not None:
-                temp.append(j.wifeN)
-        print(*temp, sep = '\n')
-        self.assertNotIn('Tina /Bush/', temp)
+    # def test_sameID_family(self):
+    #     GedRead.indList = []
+    #     GedRead.famList = []
+    #     GedRead.linedataList = []
+    #     temp = []
+    #     GedRead.readGed('SameIDFamily.ged')
+    #     for j in GedRead.famList:
+    #         if j.wifeN is not None:
+    #             temp.append(j.wifeN)
+    #     print(*temp, sep = '\n')
+    #     self.assertNotIn('Tina /Bush/', temp)
+
+
+    def test_create_class(self):
+        print("~~~Test Create~~~~")
+        testIndi = individual(indi="test",name="test")
+        testIndi.printInfo()
+        self.assertEqual(testIndi.indi,"test")
+        testFamily = family(famid="testFam",wife="Godzilla")
+        testFamily.printBriefInfo()
+        self.assertEqual(testFamily.wife,"Godzilla")
+        print("~~~Test Create~~~~")
 
 if __name__ == '__main__':
     print('Running unit tests')
