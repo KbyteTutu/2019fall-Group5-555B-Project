@@ -90,6 +90,15 @@ def isValid(level:"tag level", tag:"tag name") -> str:
     else:
         return "N"
 
+def getNameByIndi(indi):
+    re = "Invalid / Not Mentioned"
+    for person in indList:
+        if person.indi == indi:
+            re = person.name
+            break
+    return re
+
+
 def readGed(file):
     try:
         validity = 'valid'
@@ -108,10 +117,10 @@ def readGed(file):
         infoProcess(linedataList,2)
         print("=====Individuals=====")
         for i in indList:
-            i.printInfo()
+            i.printBriefInfo()
         print("=====Family=====")
         for j in famList:
-            j.printInfo()
+            print("FamilyID:"+j.famid+ " Husband Name:"+ getNameByIndi(j.husband) + " Wife Name:" + getNameByIndi(j.wife))
 
         myGed.close()
     except:
