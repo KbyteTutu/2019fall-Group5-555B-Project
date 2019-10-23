@@ -7,6 +7,12 @@ from GedMembers import family
 import copy
 import sys
 
+indList = []
+famList = []
+linedataList = []
+
+indLength = 5000
+famLength = 1000
 
 def infoProcess(line:"Data line",type:"1 for indi 2 for fam"):# To get data in lines and store in a list
     ListTemp = copy.deepcopy(linedataList[0: -1])
