@@ -10,22 +10,28 @@ from GedMembers import family
 
 class test_ged(unittest.TestCase):
 
-    def test_read_ged_validity(self):
+    def test_ged_validity(self):
         self.assertEqual(GedRead.readGed('24234231234.ged'), 'invalid')
-        self.assertEqual(GedRead.readGed('WrongSex.ged'), 'invalid')
-        self.assertEqual(GedRead.readGed('FliipedHusbWife.ged'), 'invalid')
         self.assertEqual(GedRead.readGed('Group 5 GED.ged'), 'valid')
 
 
-    def test_sameID_or_sameName_individual(self):
+    def test_same_ID_or_Name_individual(self):
+        GedRead.indList = []
+        GedRead.famList = []
+        GedRead.linedataList = []
         temp = []
         GedRead.readGedTest('SameIDDIfferentName.ged', temp, True)
+        self.assertEqual(GedRead.readGed('SameIDDifferentName.ged'), 'valid')
         self.assertNotIn('Robert /Smith/', temp)
+        GedRead.indList = []
+        GedRead.famList = []
+        GedRead.linedataList = []
         temp = []
         GedRead.readGedTest('SameNameDifferentId.ged', temp, True)
+        self.assertEqual(GedRead.readGed('SameNameDifferentId.ged'), 'valid')
         self.assertNotIn('@I2@', temp)
 
-    # def test_invalid_amount_ind_and_fam(self):
+    # def test_amount_ind_and_fam(self):
     #    GedRead.indList = []
     #    GedRead.famList = []
     #    GedRead.linedataList = []
@@ -48,8 +54,12 @@ class test_ged(unittest.TestCase):
 
 
     def test_sameID_family(self):
+        GedRead.indList = []
+        GedRead.famList = []
+        GedRead.linedataList = []
         temp = []
         GedRead.readGed('SameIDFamily.ged')
+        self.assertEqual(GedRead.readGed('SameIDFamily.ged'), 'valid')
         for j in GedRead.famList:
             if j.wifeN is not None:
                 temp.append(j.wifeN)
@@ -57,6 +67,9 @@ class test_ged(unittest.TestCase):
         self.assertNotIn('Tina /Bush/', temp)
 
     def test_create_class(self):
+        GedRead.indList = []
+        GedRead.famList = []
+        GedRead.linedataList = []
         print("~~~Test Create~~~~")
         testIndi = individual(indi="test", name="test")
         testIndi.printInfo()
@@ -66,6 +79,19 @@ class test_ged(unittest.TestCase):
         self.assertEqual(testFamily.wife, "Godzilla")
         print("~~~Test Create~~~~")
 
+    def test_check_Sex_and_HusbWife(self):
+        GedRead.indList = []
+        GedRead.famList = []
+        GedRead.linedataList = []
+        GedRead.readGed('WrongSex.ged')
+        self.assertEqual(GedRead.readGed('WrongSex.ged'), 'valid')
+        self.assertFalse(GedRead.validate_family(GedRead.indList, GedRead.famList))
+        GedRead.indList = []
+        GedRead.famList = []
+        GedRead.linedataList = []
+        GedRead.readGed('FlippedHusbWife.ged')
+        self.assertEqual(GedRead.readGed('FlippedHusbWife.ged'), 'valid')
+        self.assertFalse(GedRead.validate_family(GedRead.indList, GedRead.famList))
 
 if __name__ == '__main__':
     print('Running unit tests')
