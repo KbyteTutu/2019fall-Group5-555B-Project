@@ -90,6 +90,22 @@ def isValid(level:"tag level", tag:"tag name") -> str:
     else:
         return "N"
 
+def  validate_family(indList,famList):
+
+    for family in famList:
+
+        for ind in indList:
+
+            if(ind.family== family.famid):
+
+                if(ind.sex!='M' && ind.sex!='F' )
+                    return False
+        if(family.husband!="invalid/not mentioned" and family.husband.sex!='M' )
+            return False
+        if(family.wife!="invalid/not mentioned" and family.wife.sex!='F' )
+            return False
+
+
 def getNameByIndi(indi):
     re = "Invalid / Not Mentioned"
     for person in indList:
@@ -107,6 +123,7 @@ def readGed(file):
     indLength = 5000
     famLength = 1000
     validity = 'valid'
+	validate_family(indList,famList)
     try:
         myGed = open(file, "r")
         gedLines = myGed.readlines()
