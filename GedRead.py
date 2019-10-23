@@ -7,12 +7,6 @@ from GedMembers import family
 import copy
 import sys
 
-indList = []
-famList = []
-linedataList = []
-
-indLength = 5000
-famLength = 1000
 
 def infoProcess(line:"Data line",type:"1 for indi 2 for fam"):# To get data in lines and store in a list
     ListTemp = copy.deepcopy(linedataList[0: -1])
@@ -100,8 +94,14 @@ def getNameByIndi(indi):
 
 
 def readGed(file):
+    indList = []
+    famList = []
+    linedataList = []
+
+    indLength = 5000
+    famLength = 1000
+    validity = 'valid'
     try:
-        validity = 'valid'
         myGed = open(file, "r")
         gedLines = myGed.readlines()
         gedLines.append("END END END")
@@ -129,6 +129,46 @@ def readGed(file):
         myGed.close()
     finally:
         return validity
+
+
+def readGedTest(file, temp, ind):
+    indList = []
+    famList = []
+    linedataList = []
+
+    indLength = 5000
+    famLength = 1000
+    try:
+        myGed = open(file, "r")
+        gedLines = myGed.readlines()
+        gedLines.append("END END END")
+        for line in gedLines:
+            #Do line cut and store the whole line
+            line = line + " "
+            linedata = [line[0:1], line[2:line.index(" ", 2)], "Valid", line[line.index(" ", 2) + 1:-1]]
+            linedata[2] = isValid(linedata[0], linedata[1])
+            linedata[3] = linedata[3].replace("\n","")
+            linedataList.append(linedata)
+
+        infoProcess(linedataList,1)
+        infoProcess(linedataList,2)
+        print("=====Individuals=====")
+        for i in indList:
+            i.printBriefInfo()
+        print("=====Family=====")
+        for j in famList:
+            print("FamilyID:"+j.famid+ " Husband Name:"+ getNameByIndi(j.husband) + " Wife Name:" + getNameByIndi(j.wife))
+
+        if ind == True:
+            temp = indList
+        if ind == False:
+            temp = famList
+        myGed.close()
+    except:
+        print("Invalid file")
+        myGed.close()
+    finally:
+        return temp
 
 
 

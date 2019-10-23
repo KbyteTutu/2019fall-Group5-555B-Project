@@ -9,37 +9,19 @@ from GedMembers import family
 
 class test_ged(unittest.TestCase):
     def test_read_ged_invalidity(self):
-        GedRead.indList = []
-        GedRead.famList = []
-        GedRead.linedataList = [] 
         self.assertEqual(GedRead.readGed('24234231234.ged'), 'invalid')
 
     def test_read_ged_validity(self):
-        GedRead.indList = []
-        GedRead.famList = []
-        GedRead.linedataList = [] 
         self.assertEqual(GedRead.readGed('Group 5 GED.ged'), 'valid')
 
     def test_sameID_individual(self):
-        GedRead.indList = []
-        GedRead.famList = []
-        GedRead.linedataList = [] 
         temp = []
-        GedRead.readGed('SameIDDIfferentName.ged')
-        for j in GedRead.indList:
-            if j.name is not None:
-                temp.append(j.name)
-        self.assertNotIn('Robert /Smith/', temp)    
+        GedRead.readGedTest('SameIDDIfferentName.ged', temp, True)
+        self.assertNotIn('Robert /Smith/', temp)
 
     def test_sameName_individual(self):
-        GedRead.indList = []
-        GedRead.famList = []
-        GedRead.linedataList = [] 
         temp = []
-        GedRead.readGed('SameNameDifferentId.ged')
-        for j in GedRead.indList:
-            if j.indi is not None:
-                temp.append(j.indi)
+        GedRead.readGedTest('SameNameDifferentId.ged', temp, True)
         self.assertNotIn('@I2@', temp)
 
     #def test_over_fivethousand_ind(self):
@@ -52,7 +34,7 @@ class test_ged(unittest.TestCase):
     #        if j.name is not None:
     #            temp.append(j.name)
     #    self.assertNotIn('Name is: 5001 /5001/', temp)
-    #                                                       WARNING THE ABOVE AND BELOW TESTS WILL RUN FOR A WHILE UNCOMMENT THEM IF PREPARED TO WAIT   
+    #                                                       WARNING THE ABOVE AND BELOW TESTS WILL RUN FOR A WHILE UNCOMMENT THEM IF PREPARED TO WAIT
     #def test_over_thousand_fam(self):
     #    GedRead.indList = []
     #    GedRead.famList = []
