@@ -76,7 +76,7 @@ class test_ged(unittest.TestCase):
     #     print(*temp, sep = '\n')
     #     self.assertNotIn('Tina /Bush/', temp)
 
-
+ #Testing create new class and see if the input data is right and the missing data is showing in defualt value
     def test_create_class(self):
         print("~~~Test Create~~~~")
         testIndi = individual(indi="test",name="test")
