@@ -13,15 +13,14 @@ class gedHelper(object):
         pass
     #US01 Date before CurrentDate
     def datebeforeCurrentdate(self, person):
-        util = gedUtil()
         if (person.birth !="not mentioned"):
-            return gedUtil().dateCompare(util.getDate(person.birth),person.birth)
+            return gedUtil().dateCompare(getDate(self,dateStr),person.birth)
         elif (person.marDate !="not mentioned"):
-            return gedUtil().dateCompare(person.marDate,util.getDate(person.marDate))
+            return gedUtil().dateCompare(person.marDate,getDate(self,dateStr))
         elif (person.death !="not mentioned"):
-            return gedUtil().dateCompare(person.death,util.getDate(person.death))
+            return gedUtil().dateCompare(person.death,getDate(self,dateStr))
         elif (person.divDate !="not mentioned"):
-            return gedUtil().dateCompare(person.divDate,util.getDate(person.divDate))
+            return gedUtil().dateCompare(person.divDate,getDate(self,dateStr))
         else:
             return 0
     
@@ -63,7 +62,7 @@ class gedHelper(object):
 
     #US09 Birth before death of parents
     def validBirth(self,indList, famList):
-        return_flag = True
+        return_flag = True 
         util = gedUtil()
         for ind in indList:
             if ind.familyC != "not mentioned":
@@ -89,23 +88,17 @@ class gedHelper(object):
                         mother = inds
                         marriage = inds.marDate
 
-                # here may need more consider
-                if (util.getDate(father.death)== None) or (util.getDate(ind.birth)==None) or (util.getDate(mother.death)==None):
-                    return True 
+                if util.getDate(father.death) is not None and util.getDate(father.death) < util.getDate(ind.birth) - datetime.timedelta(days=266):
+                    print("Child is born more than 9 months after death of father")
+                    return_flag = False
 
-                else:
+                if util.getDate(mother.death) is not None and util.getDate(mother.Death) < util.getDate(ind.birth):
+                    print("Child is born after death of mother")
+                    return_flag = False
 
-                    if util.getDate(father.death) is not None and util.getDate(father.death) < util.getDate(ind.birth) - datetime.timedelta(days=266):
-                        print("Child is born more than 9 months after death of father")
-                        return_flag = False
-
-                    if util.getDate(mother.death) is not None and util.getDate(mother.Death) < util.getDate(ind.birth):
-                        print("Child is born after death of mother")
-                        return_flag = False
-
-                    if util.getDate(ind.birth) < util.getDate(marriage):
-                        print("Child is born before marriage of parents")
-                        return_flag = False
+                if util.getDate(ind.birth) < util.getDate(marriage):
+                    print("Child is born before marriage of parents")
+                    return_flag = False
         return return_flag
 
     #US10 Marriage after 14
