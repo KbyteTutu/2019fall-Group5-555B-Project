@@ -90,8 +90,6 @@ def isValid(level:"tag level", tag:"tag name") -> str:
     else:
         return "N"
 
-<<<<<<< Updated upstream
-=======
 def validate_family(indList,famList):
     for family in famList:
         for ind in indList:
@@ -113,7 +111,6 @@ def getNameByIndi(indi):
     return re
 
 
->>>>>>> Stashed changes
 def readGed(file):
     indList = []
     famList = []
