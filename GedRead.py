@@ -142,18 +142,22 @@ def getFamInfoFromBlocks(blocks):
 
 def GedReader(file):
     if readGed(file):
+        gh = gedHelper()
         #put all our user story here.
+        gh.validate_family(indList,famList)
+        gh.validBirth(indList,famList)
+        gh.validMarriage(indList,famList)
+
         for i in indList:
-            if gedHelper().birthBeforeDeath(i) == False:
+            if gh.birthBeforeDeath(i) == False:
                 indList.remove(i)
-            if gedHelper().marriageBeforeDivorce(i) == False:
-                indList.remove(i)
-            
-            validate_family(indList,famList)
+            # if gh.marriageBeforeDivorce(i) == False:
+            #     indList.remove(i)
+
 
         print("=====Individuals=====")
         for i in indList:
-            i.printInfo()
+            i.printBriefInfo()
         print("=====Family=====")
         for j in famList:
             print("FamilyID:"+j.famid+ " Husband Name:"+ getNameByIndi(j.husband) + " Wife Name:" + getNameByIndi(j.wife))

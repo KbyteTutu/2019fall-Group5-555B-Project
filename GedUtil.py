@@ -13,7 +13,7 @@ class gedUtil(object):
                 currentYear = datetime.datetime.now().year
                 return currentYear-birthYear
             else:
-                return 0
+                return None
         except:
             print("Wrong Input")
 
@@ -24,3 +24,9 @@ class gedUtil(object):
             return a.__gt__(b)
         except:
             print("Wrong Input")
+
+    def getDate(self,dateStr):
+        if (dateStr != "not mentioned"):
+            return datetime.datetime.strptime(dateStr,'%d %b %Y')
+        else:
+            return None
