@@ -20,6 +20,8 @@ class individual(object):
         family ="not mentioned",
         husbID ="not mentioned",
         wifeID ="not mentioned",
+        familyC ="not mentioned",
+        #familyS = [],
         children = "not mentioned"):
         self.indi = indi
         self.name = name
@@ -29,6 +31,8 @@ class individual(object):
         self.marDate = marrigeDate
         self.divDate = divorceDate
         self.family = family
+        self.familyC = familyC
+        #self.familyS = familyS
         self.husbID = husbID
         self.wifeID = wifeID
         self.children = children
@@ -47,6 +51,8 @@ class individual(object):
         print("MarrigeDate:   " + self.marDate)
         print("DivorceDate:   " + self.divDate)
         print("Family:  " + self.family)
+        print("FamilyC: " + self.familyC)
+        #print("FamilyS: %s" (self.familyS))
         print("HusbID:  " + self.husbID)
         print("WifeID:  " + self.wifeID)
         print("Children:" + self.children)

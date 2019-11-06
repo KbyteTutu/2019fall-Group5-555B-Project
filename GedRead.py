@@ -6,6 +6,7 @@ from GedMembers import individual
 from GedMembers import family
 from GedHelper import gedHelper
 
+
 import copy
 import sys
 
@@ -100,14 +101,18 @@ def getIndInfoFromBlocks(blocks):
             for index in range(len(infoBlock)):
                 # deal with properties here
                 if infoBlock[index][4] == 'INDI':
-                    tempIndi.indi = infoBlock[index][2]
+                    tempIndi.indi = infoBlock[index][2]#Kt
                 if infoBlock[index][2] == 'NAME':
-                    tempIndi.name = infoBlock[index][4]
+                    tempIndi.name = infoBlock[index][4]#Kt
                 if infoBlock[index][2] == 'BIRT\n':
-                    tempIndi.birth = infoBlock[index+1][4]
+                    tempIndi.birth = infoBlock[index+1][4]#Kt
                 if infoBlock[index][2] == 'DEAT':
-                    tempIndi.death = infoBlock[index+1][4]
+                    tempIndi.death = infoBlock[index+1][4]#Kt
                 # Marriage/Divorce date is about to add
+                if infoBlock[index][2] == 'FAMC':
+                    tempIndi.familyC = infoBlock[index][4]#Na
+                #if j[2] == 'FAMS':
+                #    tempIndi.familyS.append(j[4])
             indList.append(tempIndi)
         else:
             print("Maximum amount of individuals stored!\n")
@@ -143,6 +148,8 @@ def GedReader(file):
                 indList.remove(i)
             if gedHelper().marriageBeforeDivorce(i) == False:
                 indList.remove(i)
+            
+            validate_family(indList,famList)
 
         print("=====Individuals=====")
         for i in indList:
