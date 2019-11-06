@@ -151,8 +151,10 @@ def GedReader(file):
         for i in indList:
             if gh.birthBeforeDeath(i) == False:
                 indList.remove(i)
-            # if gh.marriageBeforeDivorce(i) == False:
-            #     indList.remove(i)
+            #if gh.marriageBeforeDivorce(i) == False:
+            #    indList.remove(i)
+            #if gh.lessThan150Years(i) == False:
+            #    indList.remove(i)
 
 
         print("=====Individuals=====")

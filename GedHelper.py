@@ -27,6 +27,10 @@ class gedHelper(object):
         else:
             return gedUtil().dateCompare(person.divDate,person.marDate)
 
+    #US07 Less than 150 years old
+    def lessThan150Years(self, person):
+        return gedUtil.getAge(self, person) < 150
+
     def validate_family(self,indList,famList):
         for family in famList:
             for ind in indList:
@@ -47,8 +51,9 @@ class gedHelper(object):
                 father = None
                 fatherID = None
                 mother = None
-                montherID = None
+                motherID = None
                 fam = None
+                marriage = None
 
                 for family in famList:
                     if family.famid == ind.familyC:
@@ -60,8 +65,10 @@ class gedHelper(object):
                 for inds in indList:
                     if inds.indi == fatherID:
                         father = inds
+                        marriage = inds.marDate
                     if inds.indi == motherID:
                         mother = inds
+                        marriage = inds.marDate
 
                 # here may need more consider
                 if(util.getDate(father.death)== None)or(util.getDate(ind.birth)==None)or(util.getDate(mother.death)==None):
@@ -72,6 +79,9 @@ class gedHelper(object):
                         return_flag = False
                     if util.getDate(mother.death) is not None and util.getDate(mother.Death) < util.getDate(ind.birth):
                         print("Child is born after death of mother")
+                        return_flag = False
+                    if util.getDate(ind.birth) < marriage:
+                        print("Child is born before marriage of parents")
                         return_flag = False
         return return_flag
 
