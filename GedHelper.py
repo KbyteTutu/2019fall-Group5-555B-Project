@@ -60,7 +60,7 @@ class gedHelper(object):
             if family.wife != "invalid/not mentioned" and family.wife.sex != 'F':
                 return False
 
-
+    #US09 Birth before death of parents
     def validBirth(self,indList, famList):
         return_flag = True
         util = gedUtil()
@@ -89,20 +89,25 @@ class gedHelper(object):
                         marriage = inds.marDate
 
                 # here may need more consider
-                if(util.getDate(father.death)== None)or(util.getDate(ind.birth)==None)or(util.getDate(mother.death)==None):
+                if (util.getDate(father.death)== None) or (util.getDate(ind.birth)==None) or (util.getDate(mother.death)==None):
                     return True 
+
                 else:
+
                     if util.getDate(father.death) is not None and util.getDate(father.death) < util.getDate(ind.birth) - datetime.timedelta(days=266):
                         print("Child is born more than 9 months after death of father")
                         return_flag = False
+
                     if util.getDate(mother.death) is not None and util.getDate(mother.Death) < util.getDate(ind.birth):
                         print("Child is born after death of mother")
                         return_flag = False
+
                     if util.getDate(ind.birth) < util.getDate(marriage):
                         print("Child is born before marriage of parents")
                         return_flag = False
         return return_flag
 
+    #US10 Marriage after 14
     def validMarriage(self,indList, famList):
         return_flag = True
         util = gedUtil()
@@ -128,5 +133,34 @@ class gedHelper(object):
                 print(wife + " is married before 14 years old")
                 return_flag = False
 
-            return return_flag
+        return return_flag
+
+    #US29 List Deceased
+    def listDeceased(self,indList):
+        deceased = []
+        for ind in indList:
+            if ind.death != "not mentioned":
+                deceased.append(ind)
+        return deceased
+
+    #US30 List living married
+    def livingMarried(self,indList,famList):
+        living = []
+        for family in famList:
+            husband_id = family.husband
+            wife_id = family.wife
+            husband = None
+            wife = None
+
+            for ind in indList:
+                if ind.indi == husband_id and ind.death != "not mentioned":
+                    husband = ind
+                if ind.indi == wife_id and ind.death != "not mentioned":
+                    wife = ind
+            if wife is not None and husband is not None:
+                living.append(wife)
+                living.append(husband)
+        return living
+
+
 
