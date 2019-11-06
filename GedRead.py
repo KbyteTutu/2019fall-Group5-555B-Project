@@ -90,9 +90,41 @@ def isValid(level:"tag level", tag:"tag name") -> str:
     else:
         return "N"
 
+<<<<<<< Updated upstream
+=======
+def validate_family(indList,famList):
+    for family in famList:
+        for ind in indList:
+            if(ind.family== family.famid):
+                if ind.sex != 'M' and ind.sex != 'F':
+                    return False
+        if family.husband != "invalid/not mentioned" and family.husband.sex != 'M':
+            return False
+        if family.wife != "invalid/not mentioned" and family.wife.sex != 'F':
+            return False
+
+
+def getNameByIndi(indi):
+    re = "Invalid / Not Mentioned"
+    for person in indList:
+        if person.indi == indi:
+            re = person.name
+            break
+    return re
+
+
+>>>>>>> Stashed changes
 def readGed(file):
+    indList = []
+    famList = []
+    linedataList = []
+
+    indLength = 5000
+    famLength = 1000
+    validity = 'valid'
+    validate_family(indList,famList)
+    
     try:
-        validity = 'valid'
         myGed = open(file, "r")
         gedLines = myGed.readlines()
         gedLines.append("END END END")
@@ -120,6 +152,46 @@ def readGed(file):
         myGed.close()
     finally:
         return validity
+
+
+def readGedTest(file, temp, ind):
+    indList = []
+    famList = []
+    linedataList = []
+
+    indLength = 5000
+    famLength = 1000
+    try:
+        myGed = open(file, "r")
+        gedLines = myGed.readlines()
+        gedLines.append("END END END")
+        for line in gedLines:
+            #Do line cut and store the whole line
+            line = line + " "
+            linedata = [line[0:1], line[2:line.index(" ", 2)], "Valid", line[line.index(" ", 2) + 1:-1]]
+            linedata[2] = isValid(linedata[0], linedata[1])
+            linedata[3] = linedata[3].replace("\n","")
+            linedataList.append(linedata)
+
+        infoProcess(linedataList,1)
+        infoProcess(linedataList,2)
+        print("=====Individuals=====")
+        for i in indList:
+            i.printBriefInfo()
+        print("=====Family=====")
+        for j in famList:
+            print("FamilyID:"+j.famid+ " Husband Name:"+ getNameByIndi(j.husband) + " Wife Name:" + getNameByIndi(j.wife))
+
+        if ind == True:
+            temp = indList
+        if ind == False:
+            temp = famList
+        myGed.close()
+    except:
+        print("Invalid file")
+        myGed.close()
+    finally:
+        return temp
 
 
 
