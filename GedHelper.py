@@ -80,7 +80,7 @@ class gedHelper(object):
                     if util.getDate(mother.death) is not None and util.getDate(mother.Death) < util.getDate(ind.birth):
                         print("Child is born after death of mother")
                         return_flag = False
-                    if util.getDate(ind.birth) < marriage:
+                    if util.getDate(ind.birth) < util.getDate(marriage):
                         print("Child is born before marriage of parents")
                         return_flag = False
         return return_flag
