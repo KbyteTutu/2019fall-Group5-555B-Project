@@ -149,6 +149,10 @@ def GedReader(file):
         gh.validMarriage(indList,famList)
 
         for i in indList:
+            #if gh.datebeforeCurrentdate(i) == False:
+            #    inList.remove(i)
+            #if gh.birthBeforeMarriage(i) == False:
+            #    inList.remove(i)
             if gh.birthBeforeDeath(i) == False:
                 indList.remove(i)
             #if gh.marriageBeforeDivorce(i) == False:
