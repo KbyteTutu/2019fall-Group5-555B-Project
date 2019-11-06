@@ -6,22 +6,28 @@ Valid = {'INDI': 0, 'NAME': 1, 'SEX': 1, 'BIRT': 1, 'DEAT': 1, 'FAMC': 1, 'FAMS'
 
 class individual(object):
 
+
+    #Add the property you need here
     def __init__(
         self,
         indi,
         name= "empty",
         sex = "not mentioned",
         birth ="not mentioned",
-        death ="alive/not mentioned",
+        death ="not mentioned",
+        marrigeDate = "not mentioned",
+        divorceDate = "not mentioned",
         family ="not mentioned",
-        husbID ="invalid/not mentioned",
-        wifeID ="invalid/not mentioned",
+        husbID ="not mentioned",
+        wifeID ="not mentioned",
         children = "not mentioned"):
         self.indi = indi
         self.name = name
         self.sex = sex
         self.birth = birth
         self.death = death
+        self.marDate = marrigeDate
+        self.divDate = divorceDate
         self.family = family
         self.husbID = husbID
         self.wifeID = wifeID
@@ -38,6 +44,8 @@ class individual(object):
         print("Sex:     " + self.sex)
         print("Birth:   " + self.birth)
         print("Death:   " + self.death)
+        print("MarrigeDate:   " + self.marDate)
+        print("DivorceDate:   " + self.divDate)
         print("Family:  " + self.family)
         print("HusbID:  " + self.husbID)
         print("WifeID:  " + self.wifeID)
@@ -50,8 +58,8 @@ class family(object):
         self,
         famid,
         familyNickname ="not mentioned",
-        husband ="invalid/not mentioned",
-        wife ="invalid/not mentioned",
+        husband ="not mentioned",
+        wife ="not mentioned",
         children = "not mentioned"):
         self.famid = famid
         self.husband = husband

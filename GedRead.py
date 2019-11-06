@@ -4,6 +4,8 @@
 from GedMembers import Valid
 from GedMembers import individual
 from GedMembers import family
+from GedHelper import gedHelper
+
 import copy
 import sys
 
@@ -44,40 +46,7 @@ def infoProcess(line:"Data line",type:"1 for indi 2 for fam"):# To get data in l
     elif type ==2:
         getFamInfoFromBlocks(BlockList)
 
-def getIndInfoFromBlocks(blocks):
-    for i in blocks:
-        if len(indList) < indLength:
-            tempIndi = individual(None,None)
-            for j in i:
-                if j[4] == 'INDI':
-                    tempIndi.indi = j[2]
-                if j[2] == 'NAME':
-                    tempIndi.name = j[4]
-            indList.append(tempIndi)
-        else:
-            print("Maximum amount of individuals stored!\n")
 
-def getFamInfoFromBlocks(blocks):
-    for i in blocks:
-        if len(famList) < famLength:
-            tempFam = family(None,None)
-            for j in i:
-                if j[4] == 'FAM':
-                    tempFam.famid = j[2]
-                if j[2] == 'HUSB':
-                    tempFam.husband = j[4]
-                if j[2] == 'WIFE':
-                    tempFam.wife = j[4]
-            famList.append(tempFam)
-        else:
-            print("Maximum amount of families stored!\n")
-    #Search the name for them and add
-    for spouse in famList:
-        for person in indList:
-            if  person.indi == spouse.husband:
-                spouse.husbandN = person.name
-            if  person.indi == spouse.wife:
-                spouse.wifeN = person.name
 
 
 
@@ -115,13 +84,6 @@ def readGed(file):
 
         infoProcess(linedataList,1)
         infoProcess(linedataList,2)
-        print("=====Individuals=====")
-        for i in indList:
-            i.printBriefInfo()
-        print("=====Family=====")
-        for j in famList:
-            print("FamilyID:"+j.famid+ " Husband Name:"+ getNameByIndi(j.husband) + " Wife Name:" + getNameByIndi(j.wife))
-
         myGed.close()
     except:
         print("Invalid file")
@@ -131,7 +93,64 @@ def readGed(file):
         return validity
 
 
+def getIndInfoFromBlocks(blocks):
+    for infoBlock in blocks:
+        if len(indList) < indLength:
+            tempIndi = individual(None)
+            for index in range(len(infoBlock)):
+                # deal with properties here
+                if infoBlock[index][4] == 'INDI':
+                    tempIndi.indi = infoBlock[index][2]
+                if infoBlock[index][2] == 'NAME':
+                    tempIndi.name = infoBlock[index][4]
+                if infoBlock[index][2] == 'BIRT\n':
+                    tempIndi.birth = infoBlock[index+1][4]
+                if infoBlock[index][2] == 'DEAT':
+                    tempIndi.death = infoBlock[index+1][4]
+                # Marriage/Divorce date is about to add
+            indList.append(tempIndi)
+        else:
+            print("Maximum amount of individuals stored!\n")
+
+def getFamInfoFromBlocks(blocks):
+    for i in blocks:
+        if len(famList) < famLength:
+            tempFam = family(None)
+            for j in i:
+                if j[4] == 'FAM':
+                    tempFam.famid = j[2]
+                if j[2] == 'HUSB':
+                    tempFam.husband = j[4]
+                if j[2] == 'WIFE':
+                    tempFam.wife = j[4]
+            famList.append(tempFam)
+        else:
+            print("Maximum amount of families stored!\n")
+    #Search the name for them and add
+    for spouse in famList:
+        for person in indList:
+            if  person.indi == spouse.husband:
+                spouse.husbandN = person.name
+            if  person.indi == spouse.wife:
+                spouse.wifeN = person.name
+
+
+def GedReader(file):
+    if readGed(file):
+        #put all our user story here.
+        for i in indList:
+            if gedHelper().birthBeforeDeath(i) == False:
+                indList.remove(i)
+            if gedHelper().marriageBeforeDivorce(i) == False:
+                indList.remove(i)
+
+        print("=====Individuals=====")
+        for i in indList:
+            i.printInfo()
+        print("=====Family=====")
+        for j in famList:
+            print("FamilyID:"+j.famid+ " Husband Name:"+ getNameByIndi(j.husband) + " Wife Name:" + getNameByIndi(j.wife))
 
 
 if __name__ == '__main__':
-    readGed(".\TestGed\Group 5 GED.ged")
+    GedReader(".\\TestGed\\Group 5 GED.ged")
