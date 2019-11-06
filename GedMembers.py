@@ -13,7 +13,8 @@ class individual(object):
         sex = "not mentioned",
         birth ="not mentioned",
         death ="alive/not mentioned",
-        family ="not mentioned",
+        familyC ="not mentioned",
+        #familyS = [],
         husbID ="invalid/not mentioned",
         wifeID ="invalid/not mentioned",
         children = "not mentioned"):
@@ -22,7 +23,8 @@ class individual(object):
         self.sex = sex
         self.birth = birth
         self.death = death
-        self.family = family
+        self.familyC = familyC
+        #self.familyS = familyS
         self.husbID = husbID
         self.wifeID = wifeID
         self.children = children
@@ -38,7 +40,8 @@ class individual(object):
         print("Sex:     " + self.sex)
         print("Birth:   " + self.birth)
         print("Death:   " + self.death)
-        print("Family:  " + self.family)
+        print("FamilyC: " + self.familyC)
+        #print("FamilyS: %s" (self.familyS))
         print("HusbID:  " + self.husbID)
         print("WifeID:  " + self.wifeID)
         print("Children:" + self.children)
