@@ -143,7 +143,7 @@ def getDate(date):
 def validBirth(indList, famList):
     return_flag = True
     for ind in indList:
-        if len(ind.familyC > 0):
+        if ind.familyC != "not mentioned":
             father = None
             fatherID = None
             mother = None
@@ -151,7 +151,7 @@ def validBirth(indList, famList):
             fam = None
 
             for family in famList:
-                if family.famid == ind.familyC[0]:
+                if family.famid == ind.familyC:
                     fatherID = family.husband
                     motherID = family.wife
                     fam = family
