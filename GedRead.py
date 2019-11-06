@@ -118,20 +118,21 @@ def getIndInfoFromBlocks(blocks):
             print("Maximum amount of individuals stored!\n")
 
 def getFamInfoFromBlocks(blocks):
-    for i in blocks:
+    for infoBlock in blocks:
         if len(famList) < famLength:
             tempFam = family(None)
-            for j in i:
-                if j[4] == 'FAM':
-                    tempFam.famid = j[2]
-                if j[2] == 'HUSB':
-                    tempFam.husband = j[4]
-                if j[2] == 'WIFE':
-                    tempFam.wife = j[4]
+            for infoLine in infoBlock:
+                if infoLine[4] == 'FAM':
+                    tempFam.famid = infoLine[2]
+                if infoLine[2] == 'HUSB':
+                    tempFam.husband = infoLine[4]
+                if infoLine[2] == 'WIFE':
+                    tempFam.wife = infoLine[4]
             famList.append(tempFam)
         else:
             print("Maximum amount of families stored!\n")
     #Search the name for them and add
+    #Read Family data and add it to individual
     for spouse in famList:
         for person in indList:
             if  person.indi == spouse.husband:

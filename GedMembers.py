@@ -66,10 +66,15 @@ class family(object):
         familyNickname ="not mentioned",
         husband ="not mentioned",
         wife ="not mentioned",
-        children = "not mentioned"):
+        children = "not mentioned",
+        marDate = "not mentioned",
+        divDate ="not mentioned"):
         self.famid = famid
         self.husband = husband
         self.wife = wife
+        self.famlyNick =familyNickname
+        self.marDate = marDate
+        self.divDate = divDate
 
     def printBriefInfo(self):
         print("FamilyID: " + self.famid + " HusbID:" +self.husband +" WifeID:" +self.wife)
