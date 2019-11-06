@@ -134,4 +134,4 @@ def readGed(file):
 
 
 if __name__ == '__main__':
-    readGed("Group 5 GED.ged")
+    readGed(".\TestGed\Group 5 GED.ged")
