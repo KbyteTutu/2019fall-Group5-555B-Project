@@ -26,7 +26,7 @@ class gedUtil(object):
             print("Wrong Input")
 
     def getDate(self,dateStr):
-        if (dateStr != "not mentioned"):
+        if (dateStr != "not mentioned") and (dateStr is not None):
             return datetime.datetime.strptime(dateStr,'%d %b %Y')
         else:
             return None
