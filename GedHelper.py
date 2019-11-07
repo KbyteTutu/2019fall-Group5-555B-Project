@@ -16,13 +16,13 @@ class gedHelper(object):
         util = gedUtil()
         current = datetime.datetime.today()
         if (person.birth !="not mentioned"):
-            return gedUtil().dateCompare(getDate(current),person.birth)
+            return util.dateCompare(util.getDate(current),person.birth)
         elif (person.marDate !="not mentioned"):
-            return gedUtil().dateCompare(person.marDate,getDate(current))
+            return util.dateCompare(person.marDate,util.getDate(current))
         elif (person.death !="not mentioned"):
-            return gedUtil().dateCompare(person.death,getDate(current))
+            return util.dateCompare(person.death,util.getDate(current))
         elif (person.divDate !="not mentioned"):
-            return gedUtil().dateCompare(person.divDate,getDate(current))
+            return util.dateCompare(person.divDate,util.getDate(current))
         else:
             return 0
     
@@ -61,10 +61,10 @@ class gedHelper(object):
                 return False
             if family.wife != "invalid/not mentioned" and family.wife.sex != 'F':
                 return False
-
+   
+    #US08 Birth before marriage of parents
     #US09 Birth before death of parents
     def validBirth(self,indList, famList):
-        return_flag = True 
         util = gedUtil()
         for ind in indList:
             if ind.familyC != "not mentioned":
@@ -92,44 +92,67 @@ class gedHelper(object):
 
                 if util.getDate(father.death) is not None and util.getDate(father.death) < util.getDate(ind.birth) - datetime.timedelta(days=266):
                     print("Child is born more than 9 months after death of father")
-                    return_flag = False
+                    return False
 
                 if util.getDate(mother.death) is not None and util.getDate(mother.Death) < util.getDate(ind.birth):
                     print("Child is born after death of mother")
-                    return_flag = False
+                    return False
 
                 if util.getDate(ind.birth) < util.getDate(marriage):
                     print("Child is born before marriage of parents")
-                    return_flag = False
-        return return_flag
+                    return False
+        return True
 
     #US10 Marriage after 14
     def validMarriage(self,indList, famList):
-        return_flag = True
         util = gedUtil()
         current = datetime.datetime.today()
         min_birth = datetime.datetime(current.year - 14, current.month, current.day)
 
-        for family in famList:
-            husband = None
-            wife = None
-            for ind in indList:
-                if ind.indi == family.husband:
-                    husband = ind
-                if ind.indi == family.wife:
-                    wife = ind
-                if husband is not None and wife is not None:
-                    break
+        for ind in indList:
+            if ind.familyC != "not mentioned":
+                
+                #US17 No marriage to descendants
+                for family in famList:
+                    fatherID = []
+                    motherID = []
+                    descendantID = []
+                    for ind in ind.family:
+                        if family.famid == ind.familyC:
+                            fatherID.append(family.husband)
+                            motherID.append(family.wife)
+                            descendantID.append(ind)
+                    for ind in descendantID:
+                        for i in fatherID:
+                            if ind.husbID == i:
+                                print(ind + " is married to an ancestor")
+                                return False
+                        for i in motherID:
+                            if ind.wifeID == i:
+                                print(ind + " is married to an ancestor")
+                                return False
+                    
+
+                for family in famList:
+                        husband = None
+                        wife = None
+                        for ind in indList:
+                            if ind.indi == family.husband:
+                                husband = ind
+                            if ind.indi == family.wife:
+                                wife = ind
+                            if husband is not None and wife is not None:
+                                break
 
             if util.getDate(husband.birth) > min_birth:
                 print(husband + " is married before 14 years old")
-                return_flag = False
+                return False
             
             if util.getDate(wife.birth) > min_birth:
                 print(wife + " is married before 14 years old")
-                return_flag = False
+                return False
 
-        return return_flag
+        return True
 
     #US29 List Deceased
     def listDeceased(self,indList):
