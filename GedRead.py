@@ -149,7 +149,7 @@ def getFamInfoFromBlocks(blocks):
                 person.divDate = fam.divDate
 
 
-def delInd(person,list):
+def delItem(person,list):
     for p in list:
         if p.indi is person.indi:
             list.remove(p)
@@ -160,21 +160,24 @@ def GedReader(file):
     if readGed(file):
         gh = gedHelper()
         outputindList = copy.deepcopy(indList)
+        outputfamList = copy.deepcopy(famList)
         #put all our user story here.
         gh.validate_family(indList,famList)
         gh.validBirth(indList,famList)
         gh.validMarriage(indList,famList)
         for i in indList:
             #if gh.datebeforeCurrentdate(i) == False:
-            #   delInd(i,outputindList)
+            #   delItem(i,outputindList)
             if gh.birthBeforeMarriage(i) == False:
-                delInd(i,outputindList)
+                delItem(i,outputindList)
             if gh.birthBeforeDeath(i) == False:
-                delInd(i,outputindList)
+                delItem(i,outputindList)
             if gh.marriageBeforeDivorce(i) == False:
-                delInd(i,outputindList)
+                delItem(i,outputindList)
             #if gh.lessThan150Years(i) == False:
-            #   delInd(i,outputindList)
+            #   delItem(i,outputindList)
+        
+        # for f in famList:
 
 
         print("=====Individuals=====")
