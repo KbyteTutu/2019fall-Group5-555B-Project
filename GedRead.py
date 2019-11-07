@@ -98,36 +98,38 @@ def getIndInfoFromBlocks(blocks):
     for infoBlock in blocks:
         if len(indList) < indLength:
             tempIndi = individual(None)
-            for index in range(len(infoBlock)):
+            for index,infoLine in enumerate(infoBlock):
                 # deal with properties here
-                if infoBlock[index][4] == 'INDI':
-                    tempIndi.indi = infoBlock[index][2]#Kt
-                if infoBlock[index][2] == 'NAME':
-                    tempIndi.name = infoBlock[index][4]#Kt
-                if infoBlock[index][2] == 'BIRT\n':
-                    tempIndi.birth = infoBlock[index+1][4]#Kt
-                if infoBlock[index][2] == 'DEAT':
-                    tempIndi.death = infoBlock[index+1][4]#Kt
+                if infoLine[4] == 'INDI':
+                    tempIndi.indi = infoLine[2]#Kt
+                if infoLine[2] == 'NAME':
+                    tempIndi.name = infoLine[4]#Kt
+                if infoLine[2] == 'BIRT\n':
+                    tempIndi.birth = infoLine[4]#Kt
+                if infoLine[2] == 'DEAT':
+                    tempIndi.death = infoLine[4]#Kt
                 # Marriage/Divorce date is about to add
-                if infoBlock[index][2] == 'FAMC':
-                    tempIndi.familyC = infoBlock[index][4]#Na
-                #if j[2] == 'FAMS':
-                #    tempIndi.familyS.append(j[4])
+                if infoLine[2] == 'FAMC':
+                    tempIndi.familyC = infoLine[4]#Na
+                #if infoLine[2] == 'FAMS':
+                #    tempIndi.familyS.append(infoLine[4])
             indList.append(tempIndi)
         else:
             print("Maximum amount of individuals stored!\n")
 
 def getFamInfoFromBlocks(blocks):
-    for infoBlock in blocks:
+    for info in blocks:
         if len(famList) < famLength:
             tempFam = family(None)
             for index,infoLine in enumerate(infoBlock):
                 if infoLine[4] == 'FAM':
                     tempFam.famid = infoLine[2]
-                if infoLine[2] == 'HUSB':
+                if j[2] == 'HUSB':
                     tempFam.husband = infoLine[4]
-                if infoLine[2] == 'WIFE':
+                if j[2] == 'WIFE':
                     tempFam.wife = infoLine[4]
+                if j[2] == 'CHIL':
+                    tempFam.children.append(infoLine[4])
                 if infoLine[2] == 'MARR\n':
                     tempFam.marDate = infoBlock[index+1][4]
                 if infoLine[2] == '_SEPR\n':
@@ -136,7 +138,6 @@ def getFamInfoFromBlocks(blocks):
         else:
             print("Maximum amount of families stored!\n")
     #Search the name for them and add
-    #Read Family data and add it to individual
     for fam in famList:
         for person in indList:
             if  person.indi == fam.husband:
@@ -148,13 +149,11 @@ def getFamInfoFromBlocks(blocks):
                 person.marDate = fam.marDate
                 person.divDate = fam.divDate
 
-
-def delItem(person,list):
+def delInd(person,list):
     for p in list:
         if p.indi is person.indi:
             list.remove(p)
     return list
-
 
 def GedReader(file):
     if readGed(file):
@@ -176,21 +175,21 @@ def GedReader(file):
                 delItem(i,outputindList)
             if gh.marriageBeforeDeath(i) == False:
                 delItem(i,outputindList)
-	        if gh.divorceBeforeDeath(i) == False:
+            if gh.divorceBeforeDeath(i) == False:
                 delItem(i,outputindList)
             #if gh.lessThan150Years(i) == False:
             #   delItem(i,outputindList)
-        
-        # for f in famList:
-
 
         print("=====Individuals=====")
-        for i in outputindList:
-            i.printBriefInfo()
+        for i in indList:
+            i.printInfo()
         print("=====Family=====")
         for j in famList:
             print("FamilyID:"+j.famid+ " Husband Name:"+ getNameByIndi(j.husband) + " Wife Name:" + getNameByIndi(j.wife))
+            print("Children: ")
+            for x in range(len(j.children)):
+                print(getNameByIndi(j.children[x]))
 
 
 if __name__ == '__main__':
-    GedReader(".\\TestGed\\MarriageAndDivorce.ged")
+    GedReader(".\\TestGed\\Group 5 GED.ged")

@@ -48,7 +48,7 @@ class individual(object):
         print("Sex:     " + self.sex)
         print("Birth:   " + self.birth)
         print("Death:   " + self.death)
-        print("MarrigeDate:   " + self.marDate)
+        print("MarriageDate:   " + self.marDate)
         print("DivorceDate:   " + self.divDate)
         print("Family:  " + self.family)
         print("FamilyC: " + self.familyC)
@@ -66,15 +66,18 @@ class family(object):
         familyNickname ="not mentioned",
         husband ="not mentioned",
         wife ="not mentioned",
-        children = "not mentioned",
+        children = [],
         marDate = "not mentioned",
-        divDate ="not mentioned"):
+        divDate = "not mentioned"):
         self.famid = famid
         self.husband = husband
         self.wife = wife
-        self.famlyNick =familyNickname
+        self.children = []
+        self.famlyNickName = familyNickname
         self.marDate = marDate
         self.divDate = divDate
 
     def printBriefInfo(self):
         print("FamilyID: " + self.famid + " HusbID:" +self.husband +" WifeID:" +self.wife)
+        print("Children: ")
+        print(*self.children, sep = ", ")
