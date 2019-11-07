@@ -33,7 +33,7 @@ def infoProcess(line:"Data line",type:"1 for indi 2 for fam"):# To get data in l
             Count += 1
         ListTemp[i[0]].insert(0,Count)
     # Save the Info Block
-    for j in range(1,Count):
+    for j in range(1,Count+1):
         tempBlock = []
         for item in ListTemp:
             if item[0] is j:
@@ -98,68 +98,88 @@ def getIndInfoFromBlocks(blocks):
     for infoBlock in blocks:
         if len(indList) < indLength:
             tempIndi = individual(None)
-            for index in range(len(infoBlock)):
+            for index,infoLine in enumerate(infoBlock):
                 # deal with properties here
-                if infoBlock[index][4] == 'INDI':
-                    tempIndi.indi = infoBlock[index][2]#Kt
-                if infoBlock[index][2] == 'NAME':
-                    tempIndi.name = infoBlock[index][4]#Kt
-                if infoBlock[index][2] == 'BIRT\n':
+                if infoLine[4] == 'INDI':
+                    tempIndi.indi = infoLine[2]#Kt
+                if infoLine[2] == 'NAME':
+                    tempIndi.name = infoLine[4]#Kt
+                if infoLine[2] == 'BIRT\n':
                     tempIndi.birth = infoBlock[index+1][4]#Kt
-                if infoBlock[index][2] == 'DEAT':
+                if infoLine[2] == 'DEAT':
                     tempIndi.death = infoBlock[index+1][4]#Kt
-                # Marriage/Divorce date is about to add
-                if infoBlock[index][2] == 'FAMC':
-                    tempIndi.familyC = infoBlock[index][4]#Na
-                #if j[2] == 'FAMS':
-                #    tempIndi.familyS.append(j[4])
+                if infoLine[2] == 'FAMC':
+                    tempIndi.familyC = infoLine[4]#Na
+                #if infoLine[2] == 'FAMS':
+                #    tempIndi.familyS.append(infoLine[4])
             indList.append(tempIndi)
         else:
             print("Maximum amount of individuals stored!\n")
 
 def getFamInfoFromBlocks(blocks):
-    for i in blocks:
+    for infoBlock in blocks:
         if len(famList) < famLength:
             tempFam = family(None)
-            for j in i:
-                if j[4] == 'FAM':
-                    tempFam.famid = j[2]
+            for index,infoLine in enumerate(infoBlock):
+                if infoLine[4] == 'FAM':
+                    tempFam.famid = infoLine[2]
                 if j[2] == 'HUSB':
-                    tempFam.husband = j[4]
+                    tempFam.husband = infoLine[4]
                 if j[2] == 'WIFE':
-                    tempFam.wife = j[4]
+                    tempFam.wife = infoLine[4]
+                if j[2] == 'CHIL':
+                    tempFam.children.append(infoLine[4])
+                if infoLine[2] == 'MARR\n':
+                    tempFam.marDate = infoBlock[index+1][4]
+                if infoLine[2] == '_SEPR\n':
+                    tempFam.divDate = infoBlock[index+1][4]
             famList.append(tempFam)
         else:
             print("Maximum amount of families stored!\n")
     #Search the name for them and add
-    for spouse in famList:
+    for fam in famList:
         for person in indList:
-            if  person.indi == spouse.husband:
-                spouse.husbandN = person.name
-            if  person.indi == spouse.wife:
-                spouse.wifeN = person.name
+            if  person.indi == fam.husband:
+                fam.husbandN = person.name
+                person.marDate = fam.marDate
+                person.divDate = fam.divDate
+            if  person.indi == fam.wife:
+                fam.wifeN = person.name
+                person.marDate = fam.marDate
+                person.divDate = fam.divDate
 
+def delItem(person,list):
+    for p in list:
+        if p.indi is person.indi:
+            list.remove(p)
+    return list
 
 def GedReader(file):
     if readGed(file):
         gh = gedHelper()
+        outputindList = copy.deepcopy(indList)
+        outputfamList = copy.deepcopy(famList)
         #put all our user story here.
         gh.validate_family(indList,famList)
         gh.validBirth(indList,famList)
         gh.validMarriage(indList,famList)
-
+        gh.validParentsage(indList,famList)
+        gh.correctGender(indList,famList)
         for i in indList:
             #if gh.datebeforeCurrentdate(i) == False:
-            #    inList.remove(i)
-            #if gh.birthBeforeMarriage(i) == False:
-            #    inList.remove(i)
+            #   delItem(i,outputindList)
+            if gh.birthBeforeMarriage(i) == False:
+                delItem(i,outputindList)
             if gh.birthBeforeDeath(i) == False:
-                indList.remove(i)
-            #if gh.marriageBeforeDivorce(i) == False:
-            #    indList.remove(i)
+                delItem(i,outputindList)
+            if gh.marriageBeforeDivorce(i) == False:
+                delItem(i,outputindList)
+            if gh.marriageBeforeDeath(i) == False:
+                delItem(i,outputindList)
+            if gh.divorceBeforeDeath(i) == False:
+                delItem(i,outputindList)
             #if gh.lessThan150Years(i) == False:
-            #    indList.remove(i)
-
+            #   delItem(i,outputindList)
 
         print("=====Individuals=====")
         for i in indList:
@@ -167,6 +187,9 @@ def GedReader(file):
         print("=====Family=====")
         for j in famList:
             print("FamilyID:"+j.famid+ " Husband Name:"+ getNameByIndi(j.husband) + " Wife Name:" + getNameByIndi(j.wife))
+            print("Children: ")
+            for x in range(len(j.children)):
+                print(getNameByIndi(j.children[x]))
 
 
 if __name__ == '__main__':
