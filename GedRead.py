@@ -176,7 +176,7 @@ def GedReader(file):
                 delItem(i,outputindList)
 	    if gh.marriageBeforeDeath(i) == False:
                 delItem(i,outputindList)
-	    if gh.marriageBeforeDeath(i) == False:
+	    if gh.divorceBeforeDeath(i) == False:
                 delItem(i,outputindList)
             #if gh.lessThan150Years(i) == False:
             #   delItem(i,outputindList)
