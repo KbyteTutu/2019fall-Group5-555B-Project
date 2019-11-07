@@ -14,14 +14,15 @@ class gedHelper(object):
     #US01 Date before CurrentDate
     def datebeforeCurrentdate(self, person):
         util = gedUtil()
+        current = datetime.datetime.today()
         if (person.birth !="not mentioned"):
-            return gedUtil().dateCompare(util.getDate(person.birth),person.birth)
+            return gedUtil().dateCompare(getDate(current),person.birth)
         elif (person.marDate !="not mentioned"):
-            return gedUtil().dateCompare(person.marDate,util.getDate(person.marDate))
+            return gedUtil().dateCompare(person.marDate,getDate(current))
         elif (person.death !="not mentioned"):
-            return gedUtil().dateCompare(person.death,util.getDate(person.death))
+            return gedUtil().dateCompare(person.death,getDate(current))
         elif (person.divDate !="not mentioned"):
-            return gedUtil().dateCompare(person.divDate,util.getDate(person.divDate))
+            return gedUtil().dateCompare(person.divDate,getDate(current))
         else:
             return 0
     
@@ -158,4 +159,5 @@ class gedHelper(object):
         return living
 
 
-
+    
+ 
