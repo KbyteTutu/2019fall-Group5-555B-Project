@@ -46,6 +46,20 @@ class gedHelper(object):
             return True
         else:
             return gedUtil().dateCompare(person.divDate,person.marDate)
+        
+    #US05 Marriage before death
+    def marriageBeforeDeath(self, person):
+        if (person.marDate =="not mentioned")or(person.death =="not mentioned"):
+            return True
+        else:
+            return gedUtil().dateCompare(person.death,person.marDate)
+				
+	#US06 Divorce before death
+    def divorceBeforeDeath(self, person):
+        if (person.divDate =="not mentioned")or(person.death =="not mentioned"):
+            return True
+        else:
+            return gedUtil().dateCompare(person.death,person.divDate)
 
     #US07 Less than 150 years old
     def lessThan150Years(self, person):
