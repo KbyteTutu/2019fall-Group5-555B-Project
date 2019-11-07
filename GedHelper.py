@@ -23,26 +23,26 @@ class gedHelper(object):
         elif (person.divDate !="not mentioned"):
             return gedUtil().dateCompare(person.divDate,util.getDate(person.divDate))
         else:
-            return 0
+            return True
     
     #US02 Birth before Marriage
     def birthBeforeMarriage(self, person):
         if (person.birth =="not mentioned")or(person.marDate =="not mentioned"):
-            return 0
+            return True
         else:
             return gedUtil().dateCompare(person.marDate,person.birth)
 
     #US03 Birth before death
     def birthBeforeDeath(self, person):
         if (person.birth =="not mentioned")or(person.death =="not mentioned"):
-            return 0
+            return True
         else:
             return gedUtil().dateCompare(person.death,person.birth)
         
     #US04 Marriage before divorce
     def marriageBeforeDivorce(self, person):
         if (person.marDate =="not mentioned")or(person.divDate =="not mentioned"):
-            return 0
+            return True
         else:
             return gedUtil().dateCompare(person.divDate,person.marDate)
 
@@ -88,18 +88,20 @@ class gedHelper(object):
                     if inds.indi == motherID:
                         mother = inds
                         marriage = inds.marDate
-
+            try:
                 if util.getDate(father.death) is not None and util.getDate(father.death) < util.getDate(ind.birth) - datetime.timedelta(days=266):
                     print("Child is born more than 9 months after death of father")
                     return_flag = False
 
-                if util.getDate(mother.death) is not None and util.getDate(mother.Death) < util.getDate(ind.birth):
+                if util.getDate(mother.death) is not None and util.getDate(mother.death) < util.getDate(ind.birth):
                     print("Child is born after death of mother")
                     return_flag = False
 
-                if util.getDate(ind.birth) < util.getDate(marriage):
+                if util.dateCompare(util.getDate(marriage),util.getDate(ind.birth)):
                     print("Child is born before marriage of parents")
                     return_flag = False
+            except:
+                print("incomplete info")
         return return_flag
 
     #US10 Marriage after 14
@@ -119,7 +121,7 @@ class gedHelper(object):
                     wife = ind
                 if husband is not None and wife is not None:
                     break
-
+        try:
             if util.getDate(husband.birth) > min_birth:
                 print(husband + " is married before 14 years old")
                 return_flag = False
@@ -127,7 +129,8 @@ class gedHelper(object):
             if util.getDate(wife.birth) > min_birth:
                 print(wife + " is married before 14 years old")
                 return_flag = False
-
+        except:
+            print("incomplete data")
         return return_flag
 
     #US29 List Deceased

@@ -33,7 +33,7 @@ def infoProcess(line:"Data line",type:"1 for indi 2 for fam"):# To get data in l
             Count += 1
         ListTemp[i[0]].insert(0,Count)
     # Save the Info Block
-    for j in range(1,Count):
+    for j in range(1,Count+1):
         tempBlock = []
         for item in ListTemp:
             if item[0] is j:
@@ -121,49 +121,64 @@ def getFamInfoFromBlocks(blocks):
     for infoBlock in blocks:
         if len(famList) < famLength:
             tempFam = family(None)
-            for infoLine in infoBlock:
+            for index,infoLine in enumerate(infoBlock):
                 if infoLine[4] == 'FAM':
                     tempFam.famid = infoLine[2]
                 if infoLine[2] == 'HUSB':
                     tempFam.husband = infoLine[4]
                 if infoLine[2] == 'WIFE':
                     tempFam.wife = infoLine[4]
+                if infoLine[2] == 'MARR\n':
+                    tempFam.marDate = infoBlock[index+1][4]
+                if infoLine[2] == '_SEPR\n':
+                    tempFam.divDate = infoBlock[index+1][4]
             famList.append(tempFam)
         else:
             print("Maximum amount of families stored!\n")
     #Search the name for them and add
     #Read Family data and add it to individual
-    for spouse in famList:
+    for fam in famList:
         for person in indList:
-            if  person.indi == spouse.husband:
-                spouse.husbandN = person.name
-            if  person.indi == spouse.wife:
-                spouse.wifeN = person.name
+            if  person.indi == fam.husband:
+                fam.husbandN = person.name
+                person.marDate = fam.marDate
+                person.divDate = fam.divDate
+            if  person.indi == fam.wife:
+                fam.wifeN = person.name
+                person.marDate = fam.marDate
+                person.divDate = fam.divDate
+
+
+def delInd(person,list):
+    for p in list:
+        if p.indi is person.indi:
+            list.remove(p)
+    return list
 
 
 def GedReader(file):
     if readGed(file):
         gh = gedHelper()
+        outputindList = copy.deepcopy(indList)
         #put all our user story here.
         gh.validate_family(indList,famList)
         gh.validBirth(indList,famList)
         gh.validMarriage(indList,famList)
-
         for i in indList:
             #if gh.datebeforeCurrentdate(i) == False:
-            #    inList.remove(i)
-            #if gh.birthBeforeMarriage(i) == False:
-            #    inList.remove(i)
+            #   delInd(i,outputindList)
+            if gh.birthBeforeMarriage(i) == False:
+                delInd(i,outputindList)
             if gh.birthBeforeDeath(i) == False:
-                indList.remove(i)
-            #if gh.marriageBeforeDivorce(i) == False:
-            #    indList.remove(i)
+                delInd(i,outputindList)
+            if gh.marriageBeforeDivorce(i) == False:
+                delInd(i,outputindList)
             #if gh.lessThan150Years(i) == False:
-            #    indList.remove(i)
+            #   delInd(i,outputindList)
 
 
         print("=====Individuals=====")
-        for i in indList:
+        for i in outputindList:
             i.printBriefInfo()
         print("=====Family=====")
         for j in famList:
@@ -171,4 +186,4 @@ def GedReader(file):
 
 
 if __name__ == '__main__':
-    GedReader(".\\TestGed\\Group 5 GED.ged")
+    GedReader(".\\TestGed\\MarriageAndDivorce.ged")
