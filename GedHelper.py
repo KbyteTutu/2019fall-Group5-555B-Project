@@ -16,13 +16,13 @@ class gedHelper(object):
         util = gedUtil()
         current = datetime.datetime.today()
         if (person.birth !="not mentioned"):
-            return gedUtil().dateCompare(getDate(current),person.birth)
+            return gedUtil().dateCompare(util.getDate(current),person.birth)
         elif (person.marDate !="not mentioned"):
-            return gedUtil().dateCompare(person.marDate,getDate(current))
+            return gedUtil().dateCompare(person.marDate,util.getDate(current))
         elif (person.death !="not mentioned"):
-            return gedUtil().dateCompare(person.death,getDate(current))
+            return gedUtil().dateCompare(person.death,util.getDate(current))
         elif (person.divDate !="not mentioned"):
-            return gedUtil().dateCompare(person.divDate,getDate(current))
+            return gedUtil().dateCompare(person.divDate,util.getDate(current))
         else:
             return 0
     
@@ -46,6 +46,23 @@ class gedHelper(object):
             return True
         else:
             return gedUtil().dateCompare(person.divDate,person.marDate)
+
+	#US05 Marriage before death
+    def marriageBeforeDeath(self, person):
+        if (person.marDate =="not mentioned")or(person.death =="not mentioned"):
+            return True
+        else:
+            return gedUtil().dateCompare(person.death,person.marDate)
+			
+			
+	#US06 Divorce before death
+    def divorceBeforeDeath(self, person):
+        if (person.divDate =="not mentioned")or(person.death =="not mentioned"):
+            return True
+        else:
+            return gedUtil().dateCompare(person.death,person.divDate)
+	
+	
 
     #US07 Less than 150 years old
     def lessThan150Years(self, person):

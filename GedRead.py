@@ -105,10 +105,9 @@ def getIndInfoFromBlocks(blocks):
                 if infoLine[2] == 'NAME':
                     tempIndi.name = infoLine[4]#Kt
                 if infoLine[2] == 'BIRT\n':
-                    tempIndi.birth = infoLine[4]#Kt
+                    tempIndi.birth = infoBlock[index+1][4]#Kt
                 if infoLine[2] == 'DEAT':
-                    tempIndi.death = infoLine[4]#Kt
-                # Marriage/Divorce date is about to add
+                    tempIndi.death = infoBlock[index+1][4]#Kt
                 if infoLine[2] == 'FAMC':
                     tempIndi.familyC = infoLine[4]#Na
                 #if infoLine[2] == 'FAMS':
@@ -118,7 +117,7 @@ def getIndInfoFromBlocks(blocks):
             print("Maximum amount of individuals stored!\n")
 
 def getFamInfoFromBlocks(blocks):
-    for info in blocks:
+    for infoBlock in blocks:
         if len(famList) < famLength:
             tempFam = family(None)
             for index,infoLine in enumerate(infoBlock):
@@ -149,7 +148,7 @@ def getFamInfoFromBlocks(blocks):
                 person.marDate = fam.marDate
                 person.divDate = fam.divDate
 
-def delInd(person,list):
+def delItem(person,list):
     for p in list:
         if p.indi is person.indi:
             list.remove(p)
@@ -182,7 +181,7 @@ def GedReader(file):
 
         print("=====Individuals=====")
         for i in indList:
-            i.printInfo()
+            i.printBriefInfo()
         print("=====Family=====")
         for j in famList:
             print("FamilyID:"+j.famid+ " Husband Name:"+ getNameByIndi(j.husband) + " Wife Name:" + getNameByIndi(j.wife))
