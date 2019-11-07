@@ -123,11 +123,11 @@ def getFamInfoFromBlocks(blocks):
             for index,infoLine in enumerate(infoBlock):
                 if infoLine[4] == 'FAM':
                     tempFam.famid = infoLine[2]
-                if j[2] == 'HUSB':
+                if infoLine[2] == 'HUSB':
                     tempFam.husband = infoLine[4]
-                if j[2] == 'WIFE':
+                if infoLine[2] == 'WIFE':
                     tempFam.wife = infoLine[4]
-                if j[2] == 'CHIL':
+                if infoLine[2] == 'CHIL':
                     tempFam.children.append(infoLine[4])
                 if infoLine[2] == 'MARR\n':
                     tempFam.marDate = infoBlock[index+1][4]
@@ -154,15 +154,14 @@ def delItem(person,list):
             list.remove(p)
     return list
 
-def GedReader(file):
-    if readGed(file):
+
+# In this method we process individuals List with all those US
+# Cuz some data will add to individual after reading the family infos
+# We have to do data processing in seperate.
+def gedHelperIndProcess()-> list:
+    try:
         gh = gedHelper()
         outputindList = copy.deepcopy(indList)
-        outputfamList = copy.deepcopy(famList)
-        #put all our user story here.
-        gh.validate_family(indList,famList)
-        gh.validBirth(indList,famList)
-        gh.validMarriage(indList,famList)
         for i in indList:
             #if gh.datebeforeCurrentdate(i) == False:
             #   delItem(i,outputindList)
@@ -179,15 +178,35 @@ def GedReader(file):
             #if gh.lessThan150Years(i) == False:
             #   delItem(i,outputindList)
 
-        print("=====Individuals=====")
-        for i in indList:
-            i.printBriefInfo()
-        print("=====Family=====")
-        for j in famList:
-            print("FamilyID:"+j.famid+ " Husband Name:"+ getNameByIndi(j.husband) + " Wife Name:" + getNameByIndi(j.wife))
-            print("Children: ")
-            for x in range(len(j.children)):
-                print(getNameByIndi(j.children[x]))
+        return outputindList
+    except:
+        print("Can't Read File")
+
+def gedHelperFamProcess()-> list:
+    outputfamList = copy.deepcopy(famList)
+    return outputfamList
+
+
+
+def GedReader(file):
+    readGed(file)
+    # gedHelper().validate_family(indList,famList)
+    gedHelper().validBirth(indList,famList)
+    gedHelper().validMarriage(indList,famList)
+    outputindList = gedHelperIndProcess()
+    outputfamList = gedHelperFamProcess()
+
+
+    # here is the out put
+    print("=====Individuals=====")
+    for i in outputindList:
+        i.printBriefInfo()
+    print("=====Family=====")
+    for j in outputfamList:
+        print("FamilyID:"+j.famid+ " Husband Name:"+ getNameByIndi(j.husband) + " Wife Name:" + getNameByIndi(j.wife))
+        print("Children: ")
+        for x in range(len(j.children)):
+            print(getNameByIndi(j.children[x]))
 
 
 if __name__ == '__main__':
