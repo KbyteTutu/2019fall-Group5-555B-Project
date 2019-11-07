@@ -16,13 +16,13 @@ class gedHelper(object):
         util = gedUtil()
         current = datetime.datetime.today()
         if (person.birth !="not mentioned"):
-            return gedUtil().dateCompare(getDate(current),person.birth)
+            return gedUtil().dateCompare(util.getDate(current),person.birth)
         elif (person.marDate !="not mentioned"):
-            return gedUtil().dateCompare(person.marDate,getDate(current))
+            return gedUtil().dateCompare(person.marDate,util.getDate(current))
         elif (person.death !="not mentioned"):
-            return gedUtil().dateCompare(person.death,getDate(current))
+            return gedUtil().dateCompare(person.death,util.getDate(current))
         elif (person.divDate !="not mentioned"):
-            return gedUtil().dateCompare(person.divDate,getDate(current))
+            return gedUtil().dateCompare(person.divDate,util.getDate(current))
         else:
             return True
     
