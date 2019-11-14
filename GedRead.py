@@ -7,6 +7,7 @@ from GedMembers import family
 from GedHelper import gedHelper
 
 
+import traceback
 import copy
 import sys
 
@@ -61,7 +62,7 @@ def isValid(level:"tag level", tag:"tag name") -> str:
         return "N"
 
 def getNameByIndi(indi):
-    re = "Invalid / Not Mentioned"
+    re = "Not Mentioned"
     for person in indList:
         if person.indi == indi:
             re = person.name
@@ -111,7 +112,7 @@ def getIndInfoFromBlocks(blocks):
                 if infoLine[2] == 'FAMC':
                     tempIndi.familyC = infoLine[4]#Na
                 #if infoLine[2] == 'FAMS':
-                #    tempIndi.familyS.append(infoLine[4])
+                   # tempIndi.familyS.append(infoLine[4])
             indList.append(tempIndi)
         else:
             print("Maximum amount of individuals stored!\n")
@@ -148,42 +149,54 @@ def getFamInfoFromBlocks(blocks):
                 person.marDate = fam.marDate
                 person.divDate = fam.divDate
 
-def delItem(person,list):
-    for p in list:
-        if p.indi is person.indi:
-            list.remove(p)
-    return list
+
 
 
 # In this method we process individuals List with all those US
 # Cuz some data will add to individual after reading the family infos
 # We have to do data processing in seperate.
 def gedHelperIndProcess()-> list:
+    Log = "Operation Log: "
     try:
         gh = gedHelper()
         outputindList = copy.deepcopy(indList)
+        outputindList = gh.UniqueNameAndBirth(outputindList)
         for i in indList:
             #if gh.datebeforeCurrentdate(i) == False:
-            #   delItem(i,outputindList)
+            #   outputindList.remove(i)
             if gh.birthBeforeMarriage(i) == False:
-                delItem(i,outputindList)
+                Log = Log + "[birthBeforeMarriage on " + i.indi + " ]"
+                outputindList.remove(i)
+                continue #if current item deleted,we dont need to go further
             if gh.birthBeforeDeath(i) == False:
-                delItem(i,outputindList)
+                Log = Log + "[birthBeforeDeath on " + i.indi + " ]"
+                outputindList.remove(i)
+                continue
             if gh.marriageBeforeDivorce(i) == False:
-                delItem(i,outputindList)
+                Log = Log + "[marriageBeforeDivorce on " + i.indi + " ]"
+                outputindList.remove(i)
+                continue
             if gh.marriageBeforeDeath(i) == False:
-                delItem(i,outputindList)
+                Log = Log + "[marriageBeforeDeath on " + i.indi + " ]"
+                outputindList.remove(i)
+                continue
             if gh.divorceBeforeDeath(i) == False:
-                delItem(i,outputindList)
+                Log = Log + "[divorceBeforeDeath on " + i.indi + " ]"
+                outputindList.remove(i)
+                continue
             #if gh.lessThan150Years(i) == False:
-            #   delItem(i,outputindList)
+            #   outputindList.remove(i)
 
         return outputindList
-    except:
-        print("Can't Read File")
+    except Exception:
+        print(Log)
+        print(traceback.format_exc())
 
 def gedHelperFamProcess()-> list:
+    gh = gedHelper()
     outputfamList = copy.deepcopy(famList)
+    outputfamList = gh.UniqueFamily(outputfamList)
+    outputfamList = gh.MultipleBirthsDelete(indList,outputfamList)
     return outputfamList
 
 
@@ -196,18 +209,19 @@ def GedReader(file):
     outputindList = gedHelperIndProcess()
     outputfamList = gedHelperFamProcess()
 
-
-    # here is the out put
-    print("=====Individuals=====")
-    for i in outputindList:
-        i.printBriefInfo()
-    print("=====Family=====")
-    for j in outputfamList:
-        print("FamilyID:"+j.famid+ " Husband Name:"+ getNameByIndi(j.husband) + " Wife Name:" + getNameByIndi(j.wife))
-        print("Children: ")
-        for x in range(len(j.children)):
-            print(getNameByIndi(j.children[x]))
+    if outputindList is not None:
+        # here is the out put
+        print("=====Individuals=====")
+        for i in outputindList:
+            i.printBriefInfo()
+    if outputindList is not None:
+        print("=====Family=====")
+        for j in outputfamList:
+            print("FamilyID:"+j.famid+ " Husband Name:"+ getNameByIndi(j.husband) + " Wife Name:" + getNameByIndi(j.wife))
+            print("Children: ")
+            for x in range(len(j.children)):
+                print(getNameByIndi(j.children[x]))
 
 
 if __name__ == '__main__':
-    GedReader(".\\TestGed\\Group 5 GED.ged")
+    GedReader(".\\TestGed\\MultiChild.ged")

@@ -2,6 +2,7 @@ __author__ = 'Group5'
 
 
 import datetime
+import copy
 from GedMembers import Valid
 from GedMembers import individual
 from GedMembers import family
@@ -160,6 +161,7 @@ class gedHelper(object):
             print("incomplete data")
         return return_flag
 
+<<<<<<< Updated upstream
     # US13 Siblings spacing
     def sameTimeBirth(self, PersonA, PersonB):
         util = gedUtil()
@@ -180,6 +182,60 @@ class gedHelper(object):
 
     # US19 First Cousins Should Not Marry to be continued
     def cousinsMarried(self, indList, famList):
+=======
+    
+
+    #US13 Siblings spacing
+    def SiblingsSpacing(self,indList,famList):
+        util = gedUtil()
+        outputindList = copy.deepcopy(famList)
+        for fam in famList:
+            childBirthList = []
+            if fam.children.count >= 0: 
+                for child in fam.children:
+                    birthStr = util.getBirthStrByIndi(child,indList)
+                    if birthStr != "not mentioned":
+                        childBirthList.append(util.getDate(birthStr))
+            for Date in childBirthList:
+                for Date2 in childBirthList:
+                    if gedHelper().SiblingsSpacingUtil(Date,Date2):
+                        outputindList.remove(fam)
+                        break
+        return outputindList
+    
+    def SiblingsSpacingUtil(self,date1,date2):
+        d = date1-date2
+        d = abs(d)
+        if (d.days>2) and (d.days<240):
+            return True # this means wrong info
+        else:
+            return False
+
+    #US14 Multiple births <= 5
+    def MultipleBirthsDelete(self,indList,famList):
+        util = gedUtil()
+        outputindList = copy.deepcopy(famList)
+        for fam in famList:
+            childBirthList = []
+            if fam.children.count >= 5: # only consider this situation
+                for child in fam.children:
+                    birthStr = util.getBirthStrByIndi(child,indList)
+                    if birthStr != "Not Mentioned":
+                        childBirthList.append(birthStr)
+            if childBirthList.count > 5 : # valid record more than 4
+                for item in childBirthList:
+                    if childBirthList.count(item)>5:
+                        outputindList.remove(fam)
+                        break
+        return outputindList
+
+
+
+
+
+    #US19 First Cousins Should Not Marry to be continued
+    def cousinsMarried(self,indList,famList):
+>>>>>>> Stashed changes
         return_flag = True
         util = gedUtil()
 
@@ -196,8 +252,24 @@ class gedHelper(object):
 
     # US20 Aunts and Uncles to be continued
 
+<<<<<<< Updated upstream
     # US29 List Deceased
     def listDeceased(self, indList):
+=======
+
+    #US23 Unique name and birth date
+    # I overide the __hash__ and __eq__ to implement this.
+    def UniqueNameAndBirth(self,indList):
+        return set(indList)
+
+    #US24 Unique families by spouses
+    def UniqueFamily(self,famList):
+        return set(famList)
+
+
+    #US29 List Deceased
+    def listDeceased(self,indList):
+>>>>>>> Stashed changes
         deceased = []
         for ind in indList:
             if ind.death != "not mentioned":
