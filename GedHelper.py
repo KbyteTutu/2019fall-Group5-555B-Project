@@ -208,6 +208,31 @@ class gedHelper(object):
                         break
         return outputindList
 
+    #US17 No marriage to descendants
+    def marriageToDescendant(self, indList, famList):
+        for ind in indList:
+            if ind.family != "not mentioned":
+                for family in famList:
+                    fatherID = []
+                    motherID = []
+                    descendantID = []
+                    for ind in ind.family:
+                        if family.famid == ind.family:
+                            fatherID.append(family.husband)
+                            motherID.append(family.wife)
+                            descendantID.append(ind)
+                    for ind in descendantID:
+                        for i in fatherID:
+                            if ind.husbID == i:
+                                print(ind + " is married to an ancestor")
+                                return False
+                        for i in motherID:
+                            if ind.wifeID == i:
+                                print(ind + " is married to an ancestor")
+                                return False
+        return True
+
+
     #US18 Siblings should not marry
     def siblingsMarried(self, indList, famList):
         for fam in famList:
