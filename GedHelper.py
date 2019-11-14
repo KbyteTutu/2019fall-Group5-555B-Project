@@ -208,10 +208,21 @@ class gedHelper(object):
                         break
         return outputindList
 
-
-
-
-
+    #US18 Siblings should not marry
+    def siblingsMarried(self, indList, famList):
+        for fam in famList:
+            childrenList = []
+            for ind in indList:
+                for child in fam.children:
+                    if ind.indi == child:
+                        childrenList.append(ind)         
+            for i in childrenList:
+                for j in childrenList:
+                    if (i.husbID == j.indi or i.wifeID == j.indi or i.indi == j.husbID or i.indi == j.wifeID):
+                        print(i + " and " + j + " are married siblings.")
+                        return False
+        return True
+            
     #US19 First Cousins Should Not Marry to be continued
     def cousinsMarried(self,indList,famList):
         return_flag = True
