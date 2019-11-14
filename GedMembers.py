@@ -20,9 +20,10 @@ class individual(object):
         family ="not mentioned",
         husbID ="not mentioned",
         wifeID ="not mentioned",
-        familyC ="not mentioned",
-        #familyS = [],
-        children = "not mentioned"):
+        familyC ="not mentioned", # as a child of this family
+        #familyS ="not mentioned", # as a spouse of this family
+        #children = "not mentioned"
+        ):
         self.indi = indi
         self.name = name
         self.sex = sex
@@ -35,7 +36,17 @@ class individual(object):
         #self.familyS = familyS
         self.husbID = husbID
         self.wifeID = wifeID
-        self.children = children
+        #self.children = children
+
+    
+    def __hash__(self):
+        return hash(self.name+self.birth)
+
+    def __eq__(self, other):
+        if self.name == other.name and self.birth == other.birth:
+            return  True
+        else:
+            return False
 
 
     def printBriefInfo(self):
@@ -76,6 +87,15 @@ class family(object):
         self.famlyNickName = familyNickname
         self.marDate = marDate
         self.divDate = divDate
+
+    def __hash__(self):
+        return hash(self.wife+self.husband)
+
+    def __eq__(self, other):
+        if self.wife == other.wife and self.husband == other.husband:
+            return  True
+        else:
+            return False
 
     def printBriefInfo(self):
         print("FamilyID: " + self.famid + " HusbID:" +self.husband +" WifeID:" +self.wife)

@@ -30,3 +30,13 @@ class gedUtil(object):
             return datetime.datetime.strptime(dateStr,'%d %b %Y')
         else:
             return None
+
+    def getBirthStrByIndi(self,indi,indList):
+        re = "not mentioned"
+        for person in indList:
+            if person.indi == indi:
+                re = person.birth
+                break
+        return re
+
+    
