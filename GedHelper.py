@@ -161,29 +161,8 @@ class gedHelper(object):
             print("incomplete data")
         return return_flag
 
-<<<<<<< Updated upstream
-    # US13 Siblings spacing
-    def sameTimeBirth(self, PersonA, PersonB):
-        util = gedUtil()
-        if (PersonA.birth == "not mentioned")or(PersonB.birth == "not mentioned"):
-            return True
 
-        Abirth = util.getDate(PersonA.birth)
-        Bbirth = util.getDate(PersonB.birth)
 
-        if (Abirth-Bbirth).days <= 2:
-            return True
-        else:
-            return False
-
-    
-
-    # US14 Multiple births <= 5
-
-    # US19 First Cousins Should Not Marry to be continued
-    def cousinsMarried(self, indList, famList):
-=======
-    
 
     #US13 Siblings spacing
     def SiblingsSpacing(self,indList,famList):
@@ -235,7 +214,6 @@ class gedHelper(object):
 
     #US19 First Cousins Should Not Marry to be continued
     def cousinsMarried(self,indList,famList):
->>>>>>> Stashed changes
         return_flag = True
         util = gedUtil()
 
@@ -252,10 +230,6 @@ class gedHelper(object):
 
     # US20 Aunts and Uncles to be continued
 
-<<<<<<< Updated upstream
-    # US29 List Deceased
-    def listDeceased(self, indList):
-=======
 
     #US23 Unique name and birth date
     # I overide the __hash__ and __eq__ to implement this.
@@ -269,7 +243,6 @@ class gedHelper(object):
 
     #US29 List Deceased
     def listDeceased(self,indList):
->>>>>>> Stashed changes
         deceased = []
         for ind in indList:
             if ind.death != "not mentioned":
