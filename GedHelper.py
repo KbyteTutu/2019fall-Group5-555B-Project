@@ -248,12 +248,14 @@ class gedHelper(object):
                         return False
         return True
             
-    #US19 First Cousins Should Not Marry to be continued
+    #US19 First Cousins Should Not Marry
     def cousinsMarried(self,indList,famList):
         return_flag = True
         util = gedUtil()
 
         for family in famList:
+
+            # Get the couple's IDs
             husband = None
             wife = None
             for ind in indList:
@@ -264,8 +266,79 @@ class gedHelper(object):
                 if husband is not None and wife is not None:
                     break
 
-    # US20 Aunts and Uncles to be continued
+            # Get the parents' IDs
+            husband_mother = None
+            husband_father = None
+            wife_mother = None
+            wife_father = None
+            for child_fam in famList:
+                if husband in child_fam.children:
+                    husband_mother = child_fam.wife
+                    husband_father = child_fam.husband
+                if wife in child_fam.children:
+                    wife_mother = child_fam.wife
+                    wife_father = child_fam.husband
+                if husband_mother is not None and wife_mother is not None:
+                    break
 
+            try:
+            # Husband's mother is a sister to one of the wife's parents
+                if husband_mother.familyC == wife_mother.familyC or husband_mother.familyC == wife_father.familyC:
+                    return_flag = False
+
+            # Husband's father is a brother to one of the wife's parents
+                if husband_father.familyC == wife_mother.familyC or husband_father.familyC == wife_father.familyC:
+                    return_flag = False
+            except:
+                print("incomplete info")
+
+        return return_flag
+
+    # US20 Aunts and Uncles
+    def AuntsAndUncles(self,indList,famList):
+        return_flag = True
+        util = gedUtil()
+
+        for family in famList:
+
+            # Get the couple's IDs
+            husband = None
+            wife = None
+            for ind in indList:
+                if ind.indi == family.husband:
+                    husband = ind
+                if ind.indi == family.wife:
+                    wife = ind
+                if husband is not None and wife is not None:
+                    break
+
+            # Get the parents' IDs
+            husband_mother = None
+            husband_father = None
+            wife_mother = None
+            wife_father = None
+            for child_fam in famList:
+                if husband in child_fam.children:
+                    husband_mother = child_fam.wife
+                    husband_father = child_fam.husband
+                if wife in child_fam.children:
+                    wife_mother = child_fam.wife
+                    wife_father = child_fam.husband
+                if husband_mother is not None and wife_mother is not None:
+                    break
+
+            try:
+                # Wife is a sister to one of the husband's parents 
+                if husband_mother.familyC == wife.familyC or husband_father == wife.familyC:
+                    return_flag = False
+
+                # Husband is a brother to one of the wife's parents
+                if wife_mother.familyC == husband.familyC or wife_father == husband.familyC:
+                    return_flag = False
+            except:
+                print("incomplete data")
+
+        return return_flag
 
     #US23 Unique name and birth date
     # I overide the __hash__ and __eq__ to implement this.
