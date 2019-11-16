@@ -1,8 +1,9 @@
 
 __author__= 'tutu'
-
+from GedUtil import gedUtil
 Valid = {'INDI': 0, 'NAME': 1, 'SEX': 1, 'BIRT': 1, 'DEAT': 1, 'FAMC': 1, 'FAMS': 1, 'FAM': 0,
          'MARR': 1, 'HUSB': 1, 'WIFE': 1, 'CHIL': 1, 'DIV': 1, 'DATE': 2, 'HEAD': 0, 'TRLR': 0, 'NOTE': 0}
+util = gedUtil()
 
 class individual(object):
 
@@ -48,9 +49,9 @@ class individual(object):
         else:
             return False
 
-
+    #US27 Include individual ages
     def printBriefInfo(self):
-        print("ID:"+self.indi+" Name:"+self.name)
+        print("ID: "+self.indi+" Name: "+self.name + "Age: "+ util.getAge(self))
 
     def printInfo(self):
         print("=====================")
