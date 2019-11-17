@@ -460,7 +460,27 @@ class gedHelper(object):
     def UniqueFamily(self,famList):
         return set(famList)
 
-
+    #US28 Order siblings by age
+    def orderSibling(self,indList,fam):
+        util = gedUtil()
+        siblings = []
+        children = []
+        ordered = []
+        for child in fam.children:
+            children.append(str(child))
+        for ind in indList:
+            name = str(ind.name)
+            for child in children:
+                if (name == child):
+                    siblings.append(ind)
+        while len(siblings) > 0:
+            oldest = siblings[0]
+            for sibling in siblings:
+                if util.getAge(sibling) > util.getAge(oldest):
+                    oldest = sibling
+            ordered.append(siblings.pop(siblings.index(oldest)))
+        return ordered
+            
     #US29 List Deceased
     def listDeceased(self,indList):
         deceased = []

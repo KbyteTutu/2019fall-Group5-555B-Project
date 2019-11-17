@@ -225,8 +225,9 @@ def GedReader(file):
         for j in outputfamList:
             print("FamilyID:"+j.famid+ " Husband Name:"+ getNameByIndi(j.husband) + " Wife Name:" + getNameByIndi(j.wife))
             print("Children: ")
-            for x in range(len(j.children)):
-                print(getNameByIndi(j.children[x]))
+            children = gedHelper().orderSibling(outputindList,j)
+            for x in range(len(children)):
+                print(getNameByIndi(children[x]))
 
 
 if __name__ == '__main__':
