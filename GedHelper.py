@@ -469,9 +469,9 @@ class gedHelper(object):
         for child in fam.children:
             children.append(str(child))
         for ind in indList:
-            name = str(ind.name)
+            indi = str(ind.indi)
             for child in children:
-                if (name == child):
+                if (indi == child):
                     siblings.append(ind)
         while len(siblings) > 0:
             oldest = siblings[0]

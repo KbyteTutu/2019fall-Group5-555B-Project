@@ -201,7 +201,7 @@ def gedHelperFamProcess()-> list:
     outputfamList = gh.UniqueFamily(outputfamList)
     outputfamList = gh.MultipleBirthsDelete(indList,outputfamList)
     outputfamList = gh.nobigamy(indList,outputfamList)
-    gh.validParentsage(indList,outputfamList)
+    #gh.validParentsage(indList,outputfamList)
 
     return outputfamList
 
@@ -225,9 +225,9 @@ def GedReader(file):
         for j in outputfamList:
             print("FamilyID:"+j.famid+ " Husband Name:"+ getNameByIndi(j.husband) + " Wife Name:" + getNameByIndi(j.wife))
             print("Children: ")
-            children = gedHelper().orderSibling(outputindList,j)
+            children = gedHelper().orderSibling(indList,j)
             for x in range(len(children)):
-                print(getNameByIndi(children[x]))
+                print(children[x].name)
 
 
 if __name__ == '__main__':
