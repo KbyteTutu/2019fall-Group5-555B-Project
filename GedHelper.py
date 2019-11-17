@@ -17,15 +17,16 @@ class gedHelper(object):
 
     def datebeforeCurrentdate(self, person):
         util = gedUtil()
-        current = datetime.datetime.today()
+        current = datetime.datetime.today().strftime('%d %b %Y')
+
         if (person.birth != "not mentioned"):
-            return gedUtil().dateCompare(util.getDate(current), person.birth)
+            return gedUtil().dateCompare(current, person.birth)
         elif (person.marDate != "not mentioned"):
-            return gedUtil().dateCompare(person.marDate, util.getDate(current))
+            return gedUtil().dateCompare(person.marDate, current)
         elif (person.death != "not mentioned"):
-            return gedUtil().dateCompare(person.death, util.getDate(current))
+            return gedUtil().dateCompare(person.death, current)
         elif (person.divDate != "not mentioned"):
-            return gedUtil().dateCompare(person.divDate, util.getDate(current))
+            return gedUtil().dateCompare(person.divDate, current)
         else:
             return 0
 
@@ -161,7 +162,62 @@ class gedHelper(object):
             print("incomplete data")
         return return_flag
 
+# US11 No bigamy
+    def nobigamy(self,indList,famList) -> list:
+        outputindList = copy.deepcopy(famList)
+        for ind in indList:
+            husbandchecklist = []
+            wifechecklist = []
+            husbandchecklist.append(ind.husbID)
+            wifechecklist.append(ind.wifeID)
+        husbandchecklist = set(husbandchecklist)
+        wifechecklist = set(wifechecklist)
+        for fam in famList:
+            count = 0
+            for check in husbandchecklist:
+                if fam.husband == check:
+                    count +=1
+                if count >0:
+                 outputindList.remove(fam)
+        for fam in famList:
+            count = 0
+            for check in wifechecklist:
+                if fam.husband == check:
+                    count += 1
+                if count > 0:
+                    outputindList.remove(fam)
+        return outputindList
 
+    # US12 Parents not too old
+    def validParentsage(self, indList, famList):
+        return_flag = True
+        util = gedUtil()
+
+        for family in famList:
+            husband = None
+            wife = None
+            children = None
+            for ind in indList:
+                if ind.indi == family.husband:
+                    husband = ind
+                if ind.indi == family.wife:
+                    wife = ind
+                if ind.indi == family.children:
+                    children == ind
+                if husband is not None and wife is not None and children is not None:
+                    break
+
+        try:
+            if (util.getAge(husband.birth) - util.getAge(children.birth)) > 80:
+                print("Parent of father is too old")
+                return_flag = False
+
+            if (util.getAge(wife.birth) - util.getAge(children.birth)) > 60:
+                print("Parent of mother is too old")
+                return_flag = False
+        except:
+            print("Wrong data")
+        return return_flag
 
 
     #US13 Siblings spacing
@@ -196,19 +252,18 @@ class gedHelper(object):
         outputindList = copy.deepcopy(famList)
         for fam in famList:
             childBirthList = []
-            if fam.children.count >= 5: # only consider this situation
+            
+            if len(fam.children) >= 5: # only consider this situation
                 for child in fam.children:
                     birthStr = util.getBirthStrByIndi(child,indList)
                     if birthStr != "Not Mentioned":
                         childBirthList.append(birthStr)
-            if childBirthList.count > 5 : # valid record more than 4
+            if len(childBirthList) > 5 : # valid record more than 4
                 for item in childBirthList:
                     if childBirthList.count(item)>5:
                         outputindList.remove(fam)
                         break
         return outputindList
-
-
 
 
 
@@ -229,6 +284,58 @@ class gedHelper(object):
                     break
 
     # US20 Aunts and Uncles to be continued
+
+    # US21 Correct gender for role
+    def correctGender(self, indList, famList):
+            for family in famList:
+                husband = None
+                wife = None
+                for ind in indList:
+                    if ind.indi == family.husband:
+                        husband = ind
+                    if ind.indi == family.wife:
+                        wife = ind
+                    if husband is not None and wife is not None:
+                        break
+            try:
+                if (husband.sex) != "M":
+                    print(husband + "should be Male")
+                    husband.sex = "M"
+                    return_flag = False
+                if (wife.sex) != "F":
+                    print(wife + "should be Female")
+                    wife.sex = "F"
+                    return_flag = False
+            except:
+                print("incomplete data")
+            return indList
+
+    # US22 Unique IDs
+    def noUnique_IDs(self,indList) -> list:
+        nouniquelist = []
+        for ind in indList:
+            Idlist = []
+            Idlist.append(ind.indi)
+        checklist = set(Idlist)
+        for id_check in checklist:
+            count = 0
+            for id_checks in Idlist:
+                if id_check == id_checks:
+                    count +=1
+            if count > 0:
+                nouniquelist.append(id_check)
+        indList = gedHelper().MultipleidsDelete(nouniquelist,indList)
+        return indList
+
+    def MultipleidsDelete(self,nouniquelist,indList) ->list:
+        for ind in indList:
+            count = 1
+            for id_checks in nouniquelist:
+                if ind.indi == id_checks:
+                        count += 1
+                if count > 1:
+                    indList.remove(ind)
+        return indList
 
 
     #US23 Unique name and birth date

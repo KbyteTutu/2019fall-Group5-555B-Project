@@ -160,10 +160,13 @@ def gedHelperIndProcess()-> list:
     try:
         gh = gedHelper()
         outputindList = copy.deepcopy(indList)
+        outputindList = gh.noUnique_IDs(outputindList)
         outputindList = gh.UniqueNameAndBirth(outputindList)
+        outputindList = gh.correctGender(outputindList,famList)
         for i in indList:
-            #if gh.datebeforeCurrentdate(i) == False:
-            #   outputindList.remove(i)
+            if gh.datebeforeCurrentdate(i) == False:
+                outputindList.remove(i)
+                continue
             if gh.birthBeforeMarriage(i) == False:
                 Log = Log + "[birthBeforeMarriage on " + i.indi + " ]"
                 outputindList.remove(i)
@@ -197,6 +200,9 @@ def gedHelperFamProcess()-> list:
     outputfamList = copy.deepcopy(famList)
     outputfamList = gh.UniqueFamily(outputfamList)
     outputfamList = gh.MultipleBirthsDelete(indList,outputfamList)
+    outputfamList = gh.nobigamy(indList,outputfamList)
+    gh.validParentsage(indList,outputfamList)
+
     return outputfamList
 
 
