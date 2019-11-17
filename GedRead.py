@@ -159,6 +159,9 @@ def gedHelperIndProcess()-> list:
     Log = "Operation Log: "
     try:
         gh = gedHelper()
+        #prefix age
+        for i in indList:
+            i.age = gh.LoadAgeForPerson(i)
         outputindList = copy.deepcopy(indList)
         outputindList = gh.noUnique_IDs(outputindList)
         outputindList = gh.UniqueNameAndBirth(outputindList)
@@ -187,6 +190,7 @@ def gedHelperIndProcess()-> list:
                 Log = Log + "[divorceBeforeDeath on " + i.indi + " ]"
                 outputindList.remove(i)
                 continue
+            
             #if gh.lessThan150Years(i) == False:
             #   outputindList.remove(i)
 

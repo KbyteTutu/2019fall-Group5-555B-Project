@@ -24,6 +24,7 @@ class individual(object):
         familyC ="not mentioned", # as a child of this family
         #familyS ="not mentioned", # as a spouse of this family
         #children = "not mentioned"
+        age = "not mentioned"
         ):
         self.indi = indi
         self.name = name
@@ -34,6 +35,7 @@ class individual(object):
         self.divDate = divorceDate
         self.family = family
         self.familyC = familyC
+        self.age = age
         #self.familyS = familyS
         self.husbID = husbID
         self.wifeID = wifeID
@@ -51,13 +53,14 @@ class individual(object):
 
     #US27 Include individual ages
     def printBriefInfo(self):
-        print("ID: "+self.indi+" Name: "+self.name + "Age: "+ str(util.getAge(self)))
+        print("ID: "+self.indi+", Name: "+self.name + ", Age: "+ str(self.age) )
 
     def printInfo(self):
         print("=====================")
         print("ID:      " + self.indi)
         print("Name:    " + self.name)
         print("Sex:     " + self.sex)
+        print("Age:     " + self.age)
         print("Birth:   " + self.birth)
         print("Death:   " + self.death)
         print("MarriageDate:   " + self.marDate)

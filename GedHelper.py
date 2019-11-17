@@ -460,6 +460,10 @@ class gedHelper(object):
     def UniqueFamily(self,famList):
         return set(famList)
 
+    #US27 Include person's current age when listing individuals.
+    def LoadAgeForPerson(self,person):
+        return gedUtil().getAge(person)
+
     #US28 Order siblings by age
     def orderSibling(self,indList,fam):
         util = gedUtil()
