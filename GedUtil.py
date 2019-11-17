@@ -16,6 +16,7 @@ class gedUtil(object):
                 return None
         except:
             print("Wrong Input")
+    
 
     def dateCompare(self,dateA,dateB):
         try:

@@ -51,7 +51,7 @@ class individual(object):
 
     #US27 Include individual ages
     def printBriefInfo(self):
-        print("ID: "+self.indi+" Name: "+self.name + "Age: "+ util.getAge(self))
+        print("ID: "+self.indi+" Name: "+self.name + "Age: "+ str(util.getAge(self)))
 
     def printInfo(self):
         print("=====================")
@@ -67,7 +67,6 @@ class individual(object):
         #print("FamilyS: %s" (self.familyS))
         print("HusbID:  " + self.husbID)
         print("WifeID:  " + self.wifeID)
-        print("Children:" + self.children)
         print("=====================")
 
 class family(object):

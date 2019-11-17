@@ -383,6 +383,19 @@ class gedHelper(object):
                     wife_father = child_fam.husband
                 if husband_mother is not None and wife_mother is not None:
                     break
+            try:
+                # Wife is a sister to one of the husband's parents 
+                if husband_mother.familyC == wife.familyC or husband_father == wife.familyC:
+                    return_flag = False
+
+                # Husband is a brother to one of the wife's parents
+                if wife_mother.familyC == husband.familyC or wife_father == husband.familyC:
+                    return_flag = False
+            except:
+                print("incomplete data")
+
+        return return_flag
+
 
     # US21 Correct gender for role
     def correctGender(self, indList, famList):
@@ -437,19 +450,7 @@ class gedHelper(object):
         return indList
 
 
-            try:
-                # Wife is a sister to one of the husband's parents 
-                if husband_mother.familyC == wife.familyC or husband_father == wife.familyC:
-                    return_flag = False
-
-                # Husband is a brother to one of the wife's parents
-                if wife_mother.familyC == husband.familyC or wife_father == husband.familyC:
-                    return_flag = False
-            except:
-                print("incomplete data")
-
-        return return_flag
-
+ 
     #US23 Unique name and birth date
     # I overide the __hash__ and __eq__ to implement this.
     def UniqueNameAndBirth(self,indList):
