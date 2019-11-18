@@ -265,6 +265,34 @@ class gedHelper(object):
                         break
         return outputindList
 
+    def FewerSiblings(self,indList,famList):
+        util = gedUtil()
+        outputindList = copy.deepcopy(famList)
+        for fam in famList:
+            if fam.children.count > 15:
+                outputindList.remove(fam)
+        return outputindList 
+	
+	#US16 Male Last Names
+    def MaleLastNames(self,indList,famList):
+        util = gedUtil()
+        outputindList = copy.deepcopy(famList)
+        husband = None
+        child = None
+        for family in famList:
+            for ind in indList:
+                if ind.indi == family.husband:
+                    husband = ind
+                    lastName = husband.name.split()[1]
+                    for child in family.children:
+                        for ind in indList:
+                            if ind.indi == family.children:
+                                child = ind
+                                if (child.sex == "M") and (child.name.split()[1] != lastName):
+                                    outputindList.remove(fam)
+        return outputindList    
+		
+	
     #US17 No marriage to descendants
     def marriageToDescendant(self, indList, famList):
         for ind in indList:
@@ -422,7 +450,7 @@ class gedHelper(object):
                 print("incomplete data")
             return indList
 
-    # US22 Unique IDs
+    # US22 Unique IDs and #US 24
     def noUnique_IDs(self,indList) -> list:
         nouniquelist = []
         for ind in indList:
@@ -460,6 +488,24 @@ class gedHelper(object):
     def UniqueFamily(self,famList):
         return set(famList)
 
+#US25 Unique child names in families
+    def UniqueChildName(self,famList):
+        util = gedUtil()
+        outputindList = copy.deepcopy(famList)
+        for family in famList:
+            childName = []
+           
+            for child in family.children:
+                for ind in indiList:
+                    if ind.indi == family.children:
+                        child == ind
+                        childName.append(child.name)
+                        
+            if(len(childName)!=(len(set(childName)))):
+                outputindList.remove(family)
+                break
+        return outputindList
+    
     #US27 Include person's current age when listing individuals.
     def LoadAgeForPerson(self,person):
         return gedUtil().getAge(person)
