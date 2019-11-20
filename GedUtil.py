@@ -19,11 +19,13 @@ class gedUtil(object):
             print("Wrong Input")
     
     #Used for U37
-    def dateLessThanThirtyDays(self,date):
+    def dateLessThanThirtyDays(self,date1):
         try:
-            a = datetime.datetime.strptime(date,'%d %b %Y')
-            b = datetime.datetime.strptime(date.today(),'%d %b %Y')
-            return a.__le__(b)
+            a = datetime.datetime.strptime(date1,'%d %m %Y')
+            b = datetime.datetime.strptime(date.today(),'%d %m %Y')
+            c = b - a
+            print(c.days)
+            return c.days <= 30
         except:
             print("Wrong Input")
 
