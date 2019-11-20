@@ -106,9 +106,9 @@ def getIndInfoFromBlocks(blocks):
                 if infoLine[2] == 'NAME':
                     tempIndi.name = infoLine[4]#Kt
                 if infoLine[2] == 'BIRT\n':
-                    tempIndi.birth = infoBlock[index+1][4]#Kt
+                    tempIndi.birth = getDate(infoBlock[index+1][4])#Kt
                 if infoLine[2] == 'DEAT':
-                    tempIndi.death = infoBlock[index+1][4]#Kt
+                    tempIndi.death = getDate(infoBlock[index+1][4])#Kt
                 if infoLine[2] == 'FAMC':
                     tempIndi.familyC = infoLine[4]#Na
                 #if infoLine[2] == 'FAMS':
@@ -131,9 +131,9 @@ def getFamInfoFromBlocks(blocks):
                 if infoLine[2] == 'CHIL':
                     tempFam.children.append(infoLine[4])
                 if infoLine[2] == 'MARR\n':
-                    tempFam.marDate = infoBlock[index+1][4]
+                    tempFam.marDate = getDate(infoBlock[index+1][4])
                 if infoLine[2] == '_SEPR\n':
-                    tempFam.divDate = infoBlock[index+1][4]
+                    tempFam.divDate = getDate(infoBlock[index+1][4])
             famList.append(tempFam)
         else:
             print("Maximum amount of families stored!\n")

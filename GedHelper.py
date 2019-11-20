@@ -2,6 +2,7 @@ __author__ = 'Group5'
 
 
 import datetime
+from datetime import today
 import copy
 from GedMembers import Valid
 from GedMembers import individual
@@ -114,16 +115,16 @@ class gedHelper(object):
                         marriage = inds.marDate
 
                 try:
-                    if util.getDate(father.death) is not None and util.getDate(father.death) < util.getDate(ind.birth) - datetime.timedelta(days=266):
+                    if util.getDate(self,father.death) is not None and util.getDate(self,father.death) < util.getDate(self,ind.birth) - datetime.timedelta(days=266):
                         print(
                             "Child is born more than 9 months after death of " + father.name)
                         return_flag = False
 
-                    if util.getDate(mother.death) is not None and util.getDate(mother.death) < util.getDate(ind.birth):
+                    if util.getDate(self,mother.death) is not None and util.getDate(self,mother.death) < util.getDate(self,ind.birth):
                         print("Child is born after death of " + mother.name)
                         return_flag = False
 
-                    if util.getDate(ind.birth) < util.getDate(marriage):
+                    if util.getDate(self,ind.birth) < util.getDate(self,marriage):
                         print("Child is born before marriage of " +
                               father.name + " and " + mother.name)
                         return_flag = False
@@ -151,11 +152,11 @@ class gedHelper(object):
                     break
 
         try:
-            if util.getDate(husband.birth) > min_birth:
+            if util.getDate(self,husband.birth) > min_birth:
                 print(husband + " is married before 14 years old")
                 return_flag = False
 
-            if util.getDate(wife.birth) > min_birth:
+            if util.getDate(self,wife.birth) > min_birth:
                 print(wife + " is married before 14 years old")
                 return_flag = False
         except:
@@ -230,7 +231,7 @@ class gedHelper(object):
                 for child in fam.children:
                     birthStr = util.getBirthStrByIndi(child,indList)
                     if birthStr != "not mentioned":
-                        childBirthList.append(util.getDate(birthStr))
+                        childBirthList.append(util.getDate(self,birthStr))
             for Date in childBirthList:
                 for Date2 in childBirthList:
                     if gedHelper().SiblingsSpacingUtil(Date,Date2):
@@ -536,3 +537,24 @@ class gedHelper(object):
                                 print("-Surviving Descendants-")
                                 print(*fam.children, sep = ", ")
         return
+
+    # US39 List Upcoming Anniversaries
+    def Anniversary(self, famList):
+        anniversaries = []
+        # Get the current day and month. Year does not matter
+        today = date.today()
+        currentMonth = today.month
+        currentDay = today.day
+        for fam in famList:
+            # Check if the family is married and not divorced
+            if fam.marDate is not "not mentioned" and fam.divDate is "not mentioned":
+                marriage = getDate(self, fam.marDate)
+                # If the month is later than the current, append it
+                if marriage.month > currentMonth:
+                    anniversaries.append(marriage)
+                # If the month is the current and the day is later, append it
+                if marriage.month == currentMonth and marriage.day > currentDay:
+                    anniversaries.append(marriage)
+        for ann in anniversaries:
+            print(ann)
+
