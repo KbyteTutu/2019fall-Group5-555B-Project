@@ -5,7 +5,7 @@ from GedMembers import Valid
 from GedMembers import individual
 from GedMembers import family
 from GedHelper import gedHelper
-
+from GedUtil import gedUtil
 
 import traceback
 import copy
@@ -106,9 +106,9 @@ def getIndInfoFromBlocks(blocks):
                 if infoLine[2] == 'NAME':
                     tempIndi.name = infoLine[4]#Kt
                 if infoLine[2] == 'BIRT\n':
-                    tempIndi.birth = getDate(infoBlock[index+1][4])#Kt
+                    tempIndi.birth = gedUtil().getDate(infoBlock[index+1][4])#Kt
                 if infoLine[2] == 'DEAT':
-                    tempIndi.death = getDate(infoBlock[index+1][4])#Kt
+                    tempIndi.death = gedUtil().getDate(infoBlock[index+1][4])#Kt
                 if infoLine[2] == 'FAMC':
                     tempIndi.familyC = infoLine[4]#Na
                 #if infoLine[2] == 'FAMS':
@@ -131,9 +131,9 @@ def getFamInfoFromBlocks(blocks):
                 if infoLine[2] == 'CHIL':
                     tempFam.children.append(infoLine[4])
                 if infoLine[2] == 'MARR\n':
-                    tempFam.marDate = getDate(infoBlock[index+1][4])
+                    tempFam.marDate = gedUtil().getDate(infoBlock[index+1][4])
                 if infoLine[2] == '_SEPR\n':
-                    tempFam.divDate = getDate(infoBlock[index+1][4])
+                    tempFam.divDate = gedUtil().getDate(infoBlock[index+1][4])
             famList.append(tempFam)
         else:
             print("Maximum amount of families stored!\n")
@@ -241,6 +241,8 @@ def GedReader(file):
     if outputindList is not None:
         print("=====Recent Survivors=====")
         gedHelper().recentSurvivors(outputindList, outputfamList)
+        print("=====Upcoming Birthdays=====")
+        gedHelper().upcomingBirthdays(outputindList)
         print("=====Living Couples=====")
         live = gedHelper().livingMarried(outputindList, outputfamList)
         for l in live:

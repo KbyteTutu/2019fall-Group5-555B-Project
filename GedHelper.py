@@ -165,9 +165,9 @@ class gedHelper(object):
 # US11 No bigamy
     def nobigamy(self,indList,famList) -> list:
         outputindList = copy.deepcopy(famList)
-        for ind in indList:
-            husbandchecklist = []
-            wifechecklist = []
+        husbandchecklist = []
+        wifechecklist = []
+        for ind in indList:  
             husbandchecklist.append(ind.husbID)
             wifechecklist.append(ind.wifeID)
         husbandchecklist = set(husbandchecklist)
@@ -425,8 +425,8 @@ class gedHelper(object):
     # US22 Unique IDs
     def noUnique_IDs(self,indList) -> list:
         nouniquelist = []
-        for ind in indList:
-            Idlist = []
+        Idlist = []
+        for ind in indList:    
             Idlist.append(ind.indi)
         checklist = set(Idlist)
         for id_check in checklist:
@@ -535,4 +535,15 @@ class gedHelper(object):
                             if len(fam.children) > 0:
                                 print("-Surviving Descendants-")
                                 print(*fam.children, sep = ", ")
+        return
+
+    #US38 List upcoming birthdays
+    def upcomingBirthdays(self, indList):
+        birthdays = []
+        for ind in indList:
+            if ind.death == "not mentioned" and gedUtil().dateWithin30Days(ind):
+                birthdays.append(ind)
+        if len(birthdays) > 0:
+            for ind in birthdays:
+                print(ind.name)
         return
