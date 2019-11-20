@@ -18,6 +18,7 @@ class gedUtil(object):
         except:
             print("Wrong Input")
     
+    #Used for U37
     def dateLessThanThirtyDays(self,date):
         try:
             a = datetime.datetime.strptime(date,'%d %b %Y')

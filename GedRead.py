@@ -232,6 +232,9 @@ def GedReader(file):
             children = gedHelper().orderSibling(indList,j)
             for x in range(len(children)):
                 print(children[x].name)
+    if outputindList is not None:
+        print("=====Recent Survivors=====")
+        gedHelper().recentSurvivors(outputindList, outputfamList)
 
 
 if __name__ == '__main__':
