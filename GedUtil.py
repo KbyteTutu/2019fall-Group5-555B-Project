@@ -1,4 +1,5 @@
 import datetime
+from datetime import date
 
 class gedUtil(object):
 
@@ -17,6 +18,13 @@ class gedUtil(object):
         except:
             print("Wrong Input")
     
+    def dateLessThanThirtyDays(self,date):
+        try:
+            a = datetime.datetime.strptime(date,'%d %b %Y')
+            b = datetime.datetime.strptime(date.today(),'%d %b %Y')
+            return a.__le__(b)
+        except:
+            print("Wrong Input")
 
     def dateCompare(self,dateA,dateB):
         try:
