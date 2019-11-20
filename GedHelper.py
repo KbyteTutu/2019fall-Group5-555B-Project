@@ -557,3 +557,28 @@ class gedHelper(object):
                 living.append(wife)
                 living.append(husband)
         return living
+
+    #US37 List recent survivors
+    def recentSurvivors(self, indList, famList):
+        for ind in indList:
+            if ind.death != "not mentioned":
+                if gedUtil().dateLessThanThirtyDays(ind.death):
+                    print("Recently deceased: " + ind.name)
+                    if ind.husbID != "not mentioned":
+                        for h in indList:
+                            if h.indi == ind.husbID:
+                                if h.death == "not mentioned":
+                                    print("Surviving husband: " + h.name)
+                                    break
+                    if ind.wifeID != "not mentioned":
+                        for w in indList:
+                            if w.indi == ind.wifeID:
+                                if w.death == "not mentioned":
+                                    print("Surviving wife: " + w.name)
+                                    break
+                    for fam in famList:
+                        if fam.famid == ind.family:
+                            if len(fam.children) > 0:
+                                print("-Surviving Descendants-")
+                                print(*fam.children, sep = ", ")
+        return
