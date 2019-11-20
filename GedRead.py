@@ -106,9 +106,9 @@ def getIndInfoFromBlocks(blocks):
                 if infoLine[2] == 'NAME':
                     tempIndi.name = infoLine[4]#Kt
                 if infoLine[2] == 'BIRT\n':
-                    tempIndi.birth = infoBlock[index+1][4]#Kt
+                    tempIndi.birth = getDate(infoBlock[index+1][4])#Kt
                 if infoLine[2] == 'DEAT':
-                    tempIndi.death = infoBlock[index+1][4]#Kt
+                    tempIndi.death = getDate(infoBlock[index+1][4])#Kt
                 if infoLine[2] == 'FAMC':
                     tempIndi.familyC = infoLine[4]#Na
                 #if infoLine[2] == 'FAMS':
@@ -131,9 +131,9 @@ def getFamInfoFromBlocks(blocks):
                 if infoLine[2] == 'CHIL':
                     tempFam.children.append(infoLine[4])
                 if infoLine[2] == 'MARR\n':
-                    tempFam.marDate = infoBlock[index+1][4]
+                    tempFam.marDate = getDate(infoBlock[index+1][4])
                 if infoLine[2] == '_SEPR\n':
-                    tempFam.divDate = infoBlock[index+1][4]
+                    tempFam.divDate = getDate(infoBlock[index+1][4])
             famList.append(tempFam)
         else:
             print("Maximum amount of families stored!\n")
@@ -224,6 +224,10 @@ def GedReader(file):
         print("=====Individuals=====")
         for i in outputindList:
             i.printBriefInfo()
+        print("=====Deceased=====")
+        dead = gedHelper().getDeceased(outputindList)
+        for d in dead:
+            print(d)
     if outputindList is not None:
         print("=====Family=====")
         for j in outputfamList:
@@ -232,9 +236,24 @@ def GedReader(file):
             children = gedHelper().orderSibling(indList,j)
             for x in range(len(children)):
                 print(children[x].name)
+        print("=====Anniversaries=====")
+        gedHelper().Anniversary(outputfamList)
     if outputindList is not None:
         print("=====Recent Survivors=====")
         gedHelper().recentSurvivors(outputindList, outputfamList)
+        print("=====Living Couples=====")
+        live = gedHelper().livingMarried(outputindList, outputfamList)
+        for l in live:
+            print(l)
+        if gedHelper().AuntsAndUncles(outputindList, outputfamList) is False:
+            print("WARNING: Invalid marriage between an uncle/aunt with their niece/nephew")
+        if gedHelper().cousinsMarried(outputindList, outputfamList) is False:
+            print("WARNING: Invalid marriage between first cousins")
+        if gedHelper().validMarriage(outputindList, outputfamList) is False:
+            print("WARNING: Invalid age for marriage")
+        if gedHelper().validBirth(outputindList, outputfamList) is False:
+            print("WARNING: Invalid birth date")
+        
 
 
 if __name__ == '__main__':
