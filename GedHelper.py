@@ -162,7 +162,7 @@ class gedHelper(object):
             print("incomplete data")
         return return_flag
 
-    # US11 No bigamy
+# US11 No bigamy
     def nobigamy(self,indList,famList) -> list:
         outputindList = copy.deepcopy(famList)
         for ind in indList:
@@ -522,14 +522,13 @@ class gedHelper(object):
         for ind in living:
             if ind.marriageDate =="not mentioned":
                 if getAge(ind.birth) >30:
-                    print(ind.name + "is living single")
                     livingsingle.append(ind.name)
-                    return False
-        return True
+        return livingsingle
 
     #US32 List multiple births
     def multiplebirths(self, indList, famList):
         singlebirth = []
+        multiplebirth = []
         count = 0
         for ind in indList:
             singlebirth.append(ind.birth)
@@ -539,9 +538,8 @@ class gedHelper(object):
                 if ind.birth == single:
                     count +=1
                 if count > 1:
-                    print(single + "is multiple birth")
-                    return False
-        return True      
+                    multiplebirth.append(ind.name)
+        return multiplebirth      
 
     #US37 List recent survivors
     def recentSurvivors(self, indList, famList):
