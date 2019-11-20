@@ -159,11 +159,17 @@ def gedHelperIndProcess()-> list:
     Log = "Operation Log: "
     try:
         gh = gedHelper()
-        outputindList = copy.deepcopy(indList)
-        outputindList = gh.UniqueNameAndBirth(outputindList)
+        #prefix age
         for i in indList:
-            #if gh.datebeforeCurrentdate(i) == False:
-            #   outputindList.remove(i)
+            i.age = gh.LoadAgeForPerson(i)
+        outputindList = copy.deepcopy(indList)
+        outputindList = gh.noUnique_IDs(outputindList)
+        outputindList = gh.UniqueNameAndBirth(outputindList)
+        outputindList = gh.correctGender(outputindList,famList)
+        for i in indList:
+            if gh.datebeforeCurrentdate(i) == False:
+                outputindList.remove(i)
+                continue
             if gh.birthBeforeMarriage(i) == False:
                 Log = Log + "[birthBeforeMarriage on " + i.indi + " ]"
                 outputindList.remove(i)
@@ -184,6 +190,7 @@ def gedHelperIndProcess()-> list:
                 Log = Log + "[divorceBeforeDeath on " + i.indi + " ]"
                 outputindList.remove(i)
                 continue
+            
             #if gh.lessThan150Years(i) == False:
             #   outputindList.remove(i)
 
@@ -198,7 +205,10 @@ def gedHelperFamProcess()-> list:
     outputfamList = gh.UniqueFamily(outputfamList)
     outputfamList = gh.MultipleBirthsDelete(indList,outputfamList)
     outputfamList = gh.nobigamy(indList,outputfamList)
+    #gh.validParentsage(indList,outputfamList)
+
     return outputfamList
+
 
 
 def GedReader(file):
@@ -206,7 +216,6 @@ def GedReader(file):
     # gedHelper().validate_family(indList,famList)
     gedHelper().validBirth(indList,famList)
     gedHelper().validMarriage(indList,famList)
-    gedHelper().MultipleidsDelete(noUnique_IDs(indList),indList)
     outputindList = gedHelperIndProcess()
     outputfamList = gedHelperFamProcess()
 
@@ -220,8 +229,19 @@ def GedReader(file):
         for j in outputfamList:
             print("FamilyID:"+j.famid+ " Husband Name:"+ getNameByIndi(j.husband) + " Wife Name:" + getNameByIndi(j.wife))
             print("Children: ")
-            for x in range(len(j.children)):
-                print(getNameByIndi(j.children[x]))
+            children = gedHelper().orderSibling(indList,j)
+            for x in range(len(children)):
+                print(children[x].name)
+    if outputindList is not None:
+        print("=====Multiple Births======")
+        gedHelper().multiplebirths(outputindList, outputfamList)
+    if outputindList is not None:
+        print("=====Living Single======")
+        gedHelper().livingsingle(outputindList, outputfamList)
+    if outputindList is not None:
+        print("=====Recent Survivors=====")
+        gedHelper().recentSurvivors(outputindList, outputfamList)
+
 
 
 if __name__ == '__main__':

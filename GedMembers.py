@@ -1,8 +1,9 @@
 
 __author__= 'tutu'
-
+from GedUtil import gedUtil
 Valid = {'INDI': 0, 'NAME': 1, 'SEX': 1, 'BIRT': 1, 'DEAT': 1, 'FAMC': 1, 'FAMS': 1, 'FAM': 0,
          'MARR': 1, 'HUSB': 1, 'WIFE': 1, 'CHIL': 1, 'DIV': 1, 'DATE': 2, 'HEAD': 0, 'TRLR': 0, 'NOTE': 0}
+util = gedUtil()
 
 class individual(object):
 
@@ -23,6 +24,7 @@ class individual(object):
         familyC ="not mentioned", # as a child of this family
         #familyS ="not mentioned", # as a spouse of this family
         #children = "not mentioned"
+        age = "not mentioned"
         ):
         self.indi = indi
         self.name = name
@@ -33,6 +35,7 @@ class individual(object):
         self.divDate = divorceDate
         self.family = family
         self.familyC = familyC
+        self.age = age
         #self.familyS = familyS
         self.husbID = husbID
         self.wifeID = wifeID
@@ -48,15 +51,16 @@ class individual(object):
         else:
             return False
 
-
+    #US27 Include individual ages
     def printBriefInfo(self):
-        print("ID:"+self.indi+" Name:"+self.name)
+        print("ID: "+self.indi+", Name: "+self.name + ", Age: "+ str(self.age) )
 
     def printInfo(self):
         print("=====================")
         print("ID:      " + self.indi)
         print("Name:    " + self.name)
         print("Sex:     " + self.sex)
+        print("Age:     " + self.age)
         print("Birth:   " + self.birth)
         print("Death:   " + self.death)
         print("MarriageDate:   " + self.marDate)
@@ -66,7 +70,6 @@ class individual(object):
         #print("FamilyS: %s" (self.familyS))
         print("HusbID:  " + self.husbID)
         print("WifeID:  " + self.wifeID)
-        print("Children:" + self.children)
         print("=====================")
 
 class family(object):

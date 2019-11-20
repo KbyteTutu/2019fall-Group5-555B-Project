@@ -17,15 +17,16 @@ class gedHelper(object):
 
     def datebeforeCurrentdate(self, person):
         util = gedUtil()
-        current = datetime.datetime.today()
+        current = datetime.datetime.today().strftime('%d %b %Y')
+
         if (person.birth != "not mentioned"):
-            return gedUtil().dateCompare(util.getDate(current), person.birth)
+            return gedUtil().dateCompare(current, person.birth)
         elif (person.marDate != "not mentioned"):
-            return gedUtil().dateCompare(person.marDate, util.getDate(current))
+            return gedUtil().dateCompare(person.marDate, current)
         elif (person.death != "not mentioned"):
-            return gedUtil().dateCompare(person.death, util.getDate(current))
+            return gedUtil().dateCompare(person.death, current)
         elif (person.divDate != "not mentioned"):
-            return gedUtil().dateCompare(person.divDate, util.getDate(current))
+            return gedUtil().dateCompare(person.divDate, current)
         else:
             return 0
 
@@ -211,12 +212,13 @@ class gedHelper(object):
                 print("Parent of father is too old")
                 return_flag = False
 
-            if (gedUtil.getAge(wife.birth) - gedUtil.getAge(children.birth)) > 60:
+            if (util.getAge(wife.birth) - util.getAge(children.birth)) > 60:
                 print("Parent of mother is too old")
                 return_flag = False
         except:
             print("Wrong data")
         return return_flag
+
 
     #US13 Siblings spacing
     def SiblingsSpacing(self,indList,famList):
@@ -250,12 +252,13 @@ class gedHelper(object):
         outputindList = copy.deepcopy(famList)
         for fam in famList:
             childBirthList = []
-            if fam.children.count >= 5: # only consider this situation
+            
+            if len(fam.children) >= 5: # only consider this situation
                 for child in fam.children:
                     birthStr = util.getBirthStrByIndi(child,indList)
                     if birthStr != "Not Mentioned":
                         childBirthList.append(birthStr)
-            if childBirthList.count > 5 : # valid record more than 4
+            if len(childBirthList) > 5 : # valid record more than 4
                 for item in childBirthList:
                     if childBirthList.count(item)>5:
                         outputindList.remove(fam)
@@ -286,6 +289,7 @@ class gedHelper(object):
                                 return False
         return True
 
+
     #US18 Siblings should not marry
     def siblingsMarried(self, indList, famList):
         for fam in famList:
@@ -293,22 +297,21 @@ class gedHelper(object):
             for ind in indList:
                 for child in fam.children:
                     if ind.indi == child:
-                        childrenList.append(ind)
+                        childrenList.append(ind)         
             for i in childrenList:
                 for j in childrenList:
                     if (i.husbID == j.indi or i.wifeID == j.indi or i.indi == j.husbID or i.indi == j.wifeID):
                         print(i + " and " + j + " are married siblings.")
                         return False
         return True
-
-
-
-    #US19 First Cousins Should Not Marry to be continued
+            
+    #US19 First Cousins Should Not Marry
     def cousinsMarried(self,indList,famList):
         return_flag = True
         util = gedUtil()
 
         for family in famList:
+            # Get the couple's IDs
             husband = None
             wife = None
             for ind in indList:
@@ -319,12 +322,83 @@ class gedHelper(object):
                 if husband is not None and wife is not None:
                     break
 
-    # US20 Aunts and Uncles to be continued
+            # Get the parents' IDs
+            husband_mother = None
+            husband_father = None
+            wife_mother = None
+            wife_father = None
+            for child_fam in famList:
+                if husband in child_fam.children:
+                    husband_mother = child_fam.wife
+                    husband_father = child_fam.husband
+                if wife in child_fam.children:
+                    wife_mother = child_fam.wife
+                    wife_father = child_fam.husband
+                if husband_mother is not None and wife_mother is not None:
+                    break
+
+            try:
+            # Husband's mother is a sister to one of the wife's parents
+                if husband_mother.familyC == wife_mother.familyC or husband_mother.familyC == wife_father.familyC:
+                    return_flag = False
+
+            # Husband's father is a brother to one of the wife's parents
+                if husband_father.familyC == wife_mother.familyC or husband_father.familyC == wife_father.familyC:
+                    return_flag = False
+            except:
+                print("incomplete info")
+
+        return return_flag
+
+    # US20 Aunts and Uncles
+    def AuntsAndUncles(self,indList,famList):
+
+        return_flag = True
+        util = gedUtil()
+
+        for family in famList:
+
+            # Get the couple's IDs
+            husband = None
+            wife = None
+            for ind in indList:
+                if ind.indi == family.husband:
+                    husband = ind
+                if ind.indi == family.wife:
+                    wife = ind
+                if husband is not None and wife is not None:
+                    break
+
+            # Get the parents' IDs
+            husband_mother = None
+            husband_father = None
+            wife_mother = None
+            wife_father = None
+            for child_fam in famList:
+                if husband in child_fam.children:
+                    husband_mother = child_fam.wife
+                    husband_father = child_fam.husband
+                if wife in child_fam.children:
+                    wife_mother = child_fam.wife
+                    wife_father = child_fam.husband
+                if husband_mother is not None and wife_mother is not None:
+                    break
+            try:
+                # Wife is a sister to one of the husband's parents 
+                if husband_mother.familyC == wife.familyC or husband_father == wife.familyC:
+                    return_flag = False
+
+                # Husband is a brother to one of the wife's parents
+                if wife_mother.familyC == husband.familyC or wife_father == husband.familyC:
+                    return_flag = False
+            except:
+                print("incomplete data")
+
+        return return_flag
+
 
     # US21 Correct gender for role
-        def correctGender(self, indList, famList):
-            return_flag = True
-
+    def correctGender(self, indList, famList):
             for family in famList:
                 husband = None
                 wife = None
@@ -346,10 +420,11 @@ class gedHelper(object):
                     return_flag = False
             except:
                 print("incomplete data")
-            return return_flag
+            return indList
 
     # US22 Unique IDs
     def noUnique_IDs(self,indList) -> list:
+        nouniquelist = []
         for ind in indList:
             Idlist = []
             Idlist.append(ind.indi)
@@ -360,21 +435,22 @@ class gedHelper(object):
                 if id_check == id_checks:
                     count +=1
             if count > 0:
-                nouniquelist = []
                 nouniquelist.append(id_check)
-        return nouniquelist
+        indList = gedHelper().MultipleidsDelete(nouniquelist,indList)
+        return indList
 
     def MultipleidsDelete(self,nouniquelist,indList) ->list:
-        checklist = nouniquelist
         for ind in indList:
             count = 1
-            for id_checks in checklist:
+            for id_checks in nouniquelist:
                 if ind.indi == id_checks:
                         count += 1
                 if count > 1:
-                    indlist.remove(ind)
-        return indlist
+                    indList.remove(ind)
+        return indList
 
+
+ 
     #US23 Unique name and birth date
     # I overide the __hash__ and __eq__ to implement this.
     def UniqueNameAndBirth(self,indList):
@@ -384,7 +460,31 @@ class gedHelper(object):
     def UniqueFamily(self,famList):
         return set(famList)
 
+    #US27 Include person's current age when listing individuals.
+    def LoadAgeForPerson(self,person):
+        return gedUtil().getAge(person)
 
+    #US28 Order siblings by age
+    def orderSibling(self,indList,fam):
+        util = gedUtil()
+        siblings = []
+        children = []
+        ordered = []
+        for child in fam.children:
+            children.append(str(child))
+        for ind in indList:
+            indi = str(ind.indi)
+            for child in children:
+                if (indi == child):
+                    siblings.append(ind)
+        while len(siblings) > 0:
+            oldest = siblings[0]
+            for sibling in siblings:
+                if util.getAge(sibling) > util.getAge(oldest):
+                    oldest = sibling
+            ordered.append(siblings.pop(siblings.index(oldest)))
+        return ordered
+            
     #US29 List Deceased
     def listDeceased(self,indList):
         deceased = []
@@ -411,3 +511,59 @@ class gedHelper(object):
                 living.append(wife)
                 living.append(husband)
         return living
+    
+    #US31 List living single
+    def livingsingle(self, indList, famList):
+        living =[]
+        livingsingle =[]
+        for ind in indList:
+            if ind.death != "not mentioned":
+                living.append(ind)
+        for ind in living:
+            if ind.marriageDate =="not mentioned":
+                if getAge(ind.birth) >30:
+                    print(ind.name + "is living single")
+                    livingsingle.append(ind.name)
+                    return False
+        return True
+
+    #US32 List multiple births
+    def multiplebirths(self, indList, famList):
+        singlebirth = []
+        count = 0
+        for ind in indList:
+            singlebirth.append(ind.birth)
+        set(singlebirth)
+        for single in singlebirth:
+            for ind in indList:
+                if ind.birth == single:
+                    count +=1
+                if count > 1:
+                    print(single + "is multiple birth")
+                    return False
+        return True      
+
+    #US37 List recent survivors
+    def recentSurvivors(self, indList, famList):
+        for ind in indList:
+            if ind.death != "not mentioned":
+                if gedUtil().dateLessThanThirtyDays(ind.death):
+                    print("Recently deceased: " + ind.name)
+                    if ind.husbID != "not mentioned":
+                        for h in indList:
+                            if h.indi == ind.husbID:
+                                if h.death == "not mentioned":
+                                    print("Surviving husband: " + h.name)
+                                    break
+                    if ind.wifeID != "not mentioned":
+                        for w in indList:
+                            if w.indi == ind.wifeID:
+                                if w.death == "not mentioned":
+                                    print("Surviving wife: " + w.name)
+                                    break
+                    for fam in famList:
+                        if fam.famid == ind.family:
+                            if len(fam.children) > 0:
+                                print("-Surviving Descendants-")
+                                print(*fam.children, sep = ", ")
+        return
