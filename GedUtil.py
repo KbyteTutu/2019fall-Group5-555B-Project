@@ -8,7 +8,7 @@ class gedUtil(object):
         pass
     
 
-    def InvalidDate():
+    def InvalidDate(self):
         error = "ERROR: INVALID DATE"
         return error
 
@@ -21,7 +21,7 @@ class gedUtil(object):
                     currentYear = datetime.datetime.now().year
                     return currentYear-birthYear
                 except:
-                    return InvalidDate()
+                    return gedUtil().InvalidDate()
             else:
                 return None
         except:
@@ -59,14 +59,14 @@ class gedUtil(object):
         except:
             print("Wrong Input")
 
-    # US42 Reject Illegitimate Dates
+    # US40 Reject Illegitimate Dates
     def getDate(self,dateStr):
         if (dateStr != "not mentioned") and (dateStr is not None):
             # If it cannot be converted to a datetime object, then it is an invalid date
             try:
                 return datetime.datetime.strptime(dateStr,'%d %b %Y')
             except:
-                return InvalidDate()
+                return gedUtil().InvalidDate()
         else:
             return None
 
