@@ -289,7 +289,7 @@ class gedHelper(object):
                             if ind.indi == family.children:
                                 child = ind
                                 if (child.sex == "M") and (child.name.split()[1] != lastName):
-                                    outputindList.remove(fam)
+                                    outputindList.remove(family)
         return outputindList    
 		
 	
@@ -489,14 +489,14 @@ class gedHelper(object):
         return set(famList)
 
 #US25 Unique child names in families
-    def UniqueChildName(self,famList):
+    def UniqueChildName(self,famList,indList):
         util = gedUtil()
         outputindList = copy.deepcopy(famList)
         for family in famList:
             childName = []
            
             for child in family.children:
-                for ind in indiList:
+                for ind in indList:
                     if ind.indi == family.children:
                         child == ind
                         childName.append(child.name)
