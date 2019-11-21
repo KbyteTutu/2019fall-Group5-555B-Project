@@ -7,6 +7,7 @@ from GedMembers import family
 from GedHelper import gedHelper
 from GedUtil import gedUtil
 
+import datetime
 import traceback
 import copy
 import sys
@@ -106,9 +107,9 @@ def getIndInfoFromBlocks(blocks):
                 if infoLine[2] == 'NAME':
                     tempIndi.name = infoLine[4]#Kt
                 if infoLine[2] == 'BIRT\n':
-                    tempIndi.birth = gedUtil().getDate(infoBlock[index+1][4])#Kt
+                    tempIndi.birth = datetime.datetime.strftime(gedUtil().getDate(infoBlock[index+1][4]), "'%d %b %Y'")#Kt
                 if infoLine[2] == 'DEAT':
-                    tempIndi.death = gedUtil().getDate(infoBlock[index+1][4])#Kt
+                    tempIndi.death = datetime.datetime.strftime(gedUtil().getDate(infoBlock[index+1][4]), "'%d %b %Y'")#Kt
                 if infoLine[2] == 'FAMC':
                     tempIndi.familyC = infoLine[4]#Na
                 #if infoLine[2] == 'FAMS':
@@ -131,9 +132,9 @@ def getFamInfoFromBlocks(blocks):
                 if infoLine[2] == 'CHIL':
                     tempFam.children.append(infoLine[4])
                 if infoLine[2] == 'MARR\n':
-                    tempFam.marDate = gedUtil().getDate(infoBlock[index+1][4])
+                    tempFam.marDate = datetime.datetime.strftime(gedUtil().getDate(infoBlock[index+1][4]), "'%d %b %Y'")
                 if infoLine[2] == '_SEPR\n':
-                    tempFam.divDate = gedUtil().getDate(infoBlock[index+1][4])
+                    tempFam.divDate = datetime.datetime.strftime(gedUtil().getDate(infoBlock[index+1][4]), "'%d %b %Y'")
             famList.append(tempFam)
         else:
             print("Maximum amount of families stored!\n")

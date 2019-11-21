@@ -567,7 +567,7 @@ class gedHelper(object):
                 living.append(ind)
         for ind in living:
             if ind.marriageDate =="not mentioned":
-                if getAge(ind.birth) >30:
+                if gedUtil().getAge(ind.birth) >30:
                     livingsingle.append(ind.name)
         return livingsingle
 
@@ -622,3 +622,23 @@ class gedHelper(object):
             for ind in birthdays:
                 print(ind.name)
         return
+    # US39 List Upcoming Anniversaries
+    def Anniversary(self, famList):
+        anniversaries = []
+        # Get the current day and month. Year does not matter
+        #fixed by tu
+        currentMonth = datetime.datetime.now().month
+        currentDay = datetime.datetime.now().day
+        for fam in famList:
+            # Check if the family is married and not divorced
+            if fam.marDate is not "not mentioned" and fam.divDate is "not mentioned":
+                marriage = gedUtil().getDate(fam.marDate)
+                # If the month is later than the current, append it
+                if marriage.month > currentMonth:
+                    anniversaries.append(marriage)
+                # If the month is the current and the day is later, append it
+                if marriage.month == currentMonth and marriage.day > currentDay:
+                    anniversaries.append(marriage)
+        for ann in anniversaries:
+            print(ann)
+
