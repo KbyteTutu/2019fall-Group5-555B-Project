@@ -557,6 +557,35 @@ class gedHelper(object):
                 living.append(wife)
                 living.append(husband)
         return living
+    
+    #US31 List living single
+    def livingsingle(self, indList, famList):
+        living =[]
+        livingsingle =[]
+        for ind in indList:
+            if ind.death != "not mentioned":
+                living.append(ind)
+        for ind in living:
+            if ind.marriageDate =="not mentioned":
+                if getAge(ind.birth) >30:
+                    livingsingle.append(ind.name)
+        return livingsingle
+
+    #US32 List multiple births
+    def multiplebirths(self, indList, famList):
+        singlebirth = []
+        multiplebirth = []
+        count = 0
+        for ind in indList:
+            singlebirth.append(ind.birth)
+        set(singlebirth)
+        for single in singlebirth:
+            for ind in indList:
+                if ind.birth == single:
+                    count +=1
+                if count > 1:
+                    multiplebirth.append(ind.name)
+        return multiplebirth      
 
     #US37 List recent survivors
     def recentSurvivors(self, indList, famList):

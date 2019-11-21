@@ -253,6 +253,16 @@ def GedReader(file):
             print("WARNING: Invalid age for marriage")
         if gedHelper().validBirth(outputindList, outputfamList) is False:
             print("WARNING: Invalid birth date")
+    if outputindList is not None:
+        print("=====Multiple Births======")
+        multipes = gedHelper().multiplebirths(outputindList, outputfamList)
+        for m in multipes:
+            print(m + "is living single")
+    if outputindList is not None:
+        print("=====Living Single======")
+        livingsing = gedHelper().livingsingle(outputindList, outputfamList)
+        for l in livingsing:
+            print(l + "is multiple birth")
         
 
 
