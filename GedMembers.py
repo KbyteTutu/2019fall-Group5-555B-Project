@@ -24,7 +24,8 @@ class individual(object):
         familyC ="not mentioned", # as a child of this family
         #familyS ="not mentioned", # as a spouse of this family
         #children = "not mentioned"
-        age = "not mentioned"
+        age = "not mentioned",
+        orphan = "not mentioned"
         ):
         self.indi = indi
         self.name = name
@@ -40,6 +41,7 @@ class individual(object):
         self.husbID = husbID
         self.wifeID = wifeID
         #self.children = children
+        self.orphan = orphan
 
     
     def __hash__(self):

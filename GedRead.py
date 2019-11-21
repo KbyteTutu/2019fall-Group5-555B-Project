@@ -260,13 +260,22 @@ def GedReader(file):
         print("=====Multiple Births======")
         multipes = gedHelper().multiplebirths(outputindList, outputfamList)
         for m in multipes:
-            print(m + "is living single")
+            print(m + " is living single")
     if outputindList is not None:
         print("=====Living Single======")
         livingsing = gedHelper().livingsingle(outputindList, outputfamList)
         for l in livingsing:
-            print(l + "is multiple birth")
-        
+            print(l + " is multiple birth")
+    if outputindList is not None:
+        print("=====Orphans List======")
+        orphansList = gedHelper().listOrphans(outputindList)
+        for l in orphansList:
+            print(l + " is orphan")
+    if outputindList is not None:
+        print("=====List large age differences======")
+        largeDifferList = gedHelper().listLargeAgeDifference(outputindList,famList)
+        for f in largeDifferList:
+            print(f + " has large age differences")
 
 
 if __name__ == '__main__':

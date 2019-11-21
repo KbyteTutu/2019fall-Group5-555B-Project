@@ -3,6 +3,7 @@ __author__ = 'Group5'
 
 import datetime
 import copy
+
 from GedMembers import Valid
 from GedMembers import individual
 from GedMembers import family
@@ -489,7 +490,7 @@ class gedHelper(object):
     def UniqueFamily(self,famList):
         return set(famList)
 
-#US25 Unique child names in families
+    #US25 Unique child names in families
     def UniqueChildName(self,famList,indList):
         util = gedUtil()
         outputindList = copy.deepcopy(famList)
@@ -587,6 +588,39 @@ class gedHelper(object):
                 if count > 1:
                     multiplebirth.append(ind.name)
         return multiplebirth      
+
+    #US33 List orphans
+    def listOrphans(self, indList):
+        childPrefix = []
+        orphanList = []
+        for person in indList:
+            if (person.age != 'ERROR: INVALID DATE') :
+                if int(person.age) < 18:
+                    childPrefix.append(person)
+        for child in childPrefix:
+            if child.family == "not mentioned":
+                orphanList.append(child)
+        return orphanList
+    
+    #US34 List large age differences
+    def listLargeAgeDifference(self, indList,famList):
+        re = []
+        for f in famList:
+            husAge = gedHelper().getIndi(indList,f.husband).age
+            wifAge = gedHelper().getIndi(indList,f.wife).age
+
+            if (husAge>wifAge):
+                if (husAge>= wifAge*2):
+                    re.append(f)
+            else:
+                if (wifAge>= husAge*2):
+                    re.append(f)
+        return re
+    
+    def getIndi(self,indList, indiStr):
+        for i in indList:
+            if i.indi == indiStr:
+                return i
 
     #US37 List recent survivors
     def recentSurvivors(self, indList, famList):
