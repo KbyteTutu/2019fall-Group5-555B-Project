@@ -356,10 +356,10 @@ class gedHelper(object):
             wife_mother = None
             wife_father = None
             for child_fam in famList:
-                if husband in child_fam.children:
+                if husband.indi in child_fam.children:
                     husband_mother = child_fam.wife
                     husband_father = child_fam.husband
-                if wife in child_fam.children:
+                if wife.indi in child_fam.children:
                     wife_mother = child_fam.wife
                     wife_father = child_fam.husband
                 if husband_mother is not None and wife_mother is not None:
@@ -403,10 +403,11 @@ class gedHelper(object):
             wife_mother = None
             wife_father = None
             for child_fam in famList:
-                if husband in child_fam.children:
+                #tu fix
+                if husband.indi in child_fam.children:
                     husband_mother = child_fam.wife
                     husband_father = child_fam.husband
-                if wife in child_fam.children:
+                if wife.indi in child_fam.children:
                     wife_mother = child_fam.wife
                     wife_father = child_fam.husband
                 if husband_mother is not None and wife_mother is not None:
@@ -566,7 +567,7 @@ class gedHelper(object):
             if ind.death != "not mentioned":
                 living.append(ind)
         for ind in living:
-            if ind.marriageDate =="not mentioned":
+            if ind.marDate =="not mentioned":
                 if gedUtil().getAge(ind.birth) >30:
                     livingsingle.append(ind.name)
         return livingsingle
@@ -641,4 +642,6 @@ class gedHelper(object):
                     anniversaries.append(marriage)
         for ann in anniversaries:
             print(ann)
+
+    #US 40 is in Util
 
