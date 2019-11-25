@@ -508,6 +508,14 @@ class gedHelper(object):
                 break
         return outputindList
     
+#US26 List all births in the GedCom file    
+def listBirths(self,indList):
+        birth = []
+        for ind in indList:
+            if ind.birth != "not mentioned":
+                birth.append(ind)
+        return birth
+	
     #US27 Include person's current age when listing individuals.
     def LoadAgeForPerson(self,person):
         return gedUtil().getAge(person)
@@ -626,8 +634,9 @@ class gedHelper(object):
 def recentBirthdays(self, indList):
         birthdays = []
         for ind in indList:
-            if gedUtil().dateLessThanThirtyDays(ind.birth):
-                birthdays.append(ind)
+            if ind.birth != "not mentioned":
+		if gedUtil().dateLessThanThirtyDays(ind.birth):
+                	birthdays.append(ind)
         if len(birthdays) > 0:
             for ind in birthdays:
                 print(ind.name)
