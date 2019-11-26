@@ -165,10 +165,10 @@ class gedHelper(object):
 
 # US11 No bigamy
     def nobigamy(self,indList,famList) -> list:
-        outputindList = copy.deepcopy(famList)
+        outputindList = copy.deepcopy(indList)
         husbandchecklist = []
         wifechecklist = []
-        for ind in indList:  
+        for ind in indList:
             husbandchecklist.append(ind.husbID)
             wifechecklist.append(ind.wifeID)
         husbandchecklist = set(husbandchecklist)
@@ -176,16 +176,16 @@ class gedHelper(object):
         for fam in famList:
             count = 0
             for check in husbandchecklist:
-                if fam.husband == check:
+                if ind.husbID == check:
                     count +=1
-                if count >0:
+                if count >1:
                  outputindList.remove(fam)
-        for fam in famList:
+        for fam in indList:
             count = 0
             for check in wifechecklist:
-                if fam.husband == check:
+                if ind.wifeID == check:
                     count += 1
-                if count > 0:
+                if count > 1:
                     outputindList.remove(fam)
         return outputindList
 
@@ -205,7 +205,7 @@ class gedHelper(object):
                     wife = ind
                 if ind.indi == family.children:
                     children == ind
-                if husband is not None and wife is not None and children is not None:
+                if husband !="not mentioned" and wife !="not mentioned" and children !="not mentioned":
                     break
 
         try:
@@ -429,31 +429,18 @@ class gedHelper(object):
 
     # US21 Correct gender for role
     def correctGender(self, indList, famList):
-            for family in famList:
-                husband = None
-                wife = None
-                for ind in indList:
-                    if ind.indi == family.husband:
-                        husband = ind
-                    if ind.indi == family.wife:
-                        wife = ind
-                    if husband is not None and wife is not None:
-                        break
-            try:
-                if (husband.sex) != "M":
-                    print(husband + "should be Male")
-                    husband.sex = "M"
-                    return_flag = False
-                if (wife.sex) != "F":
-                    print(wife + "should be Female")
-                    wife.sex = "F"
-                    return_flag = False
-            except:
-                print("incomplete data")
-            return indList
+            outputindList = copy.deepcopy(indList)
+            for ind in outputindList:
+                if ind.husbID !="not mentioned":
+                    if ind.sex =="F":
+                        ind.sex ="M"
+                elif ind.wifeID != "not mentioned":
+                    if ind.sex =="M":
+                        ind.sex ="F"
+            return outputindList
 
     # US22 Unique IDs and #US 24
-    def noUnique_IDs(self,indList) -> list:
+    def noUnique_IDs(self,indList):
         nouniquelist = []
         Idlist = []
         for ind in indList:    
@@ -464,21 +451,46 @@ class gedHelper(object):
             for id_checks in Idlist:
                 if id_check == id_checks:
                     count +=1
-            if count > 0:
+            if count > 1:
                 nouniquelist.append(id_check)
         indList = gedHelper().MultipleidsDelete(nouniquelist,indList)
         return indList
 
-    def MultipleidsDelete(self,nouniquelist,indList) ->list:
+    def noUnique_famIDs(self,famList):
+        nouniquelist = []
+        Idlist = []
+        for fam in famList:
+            Idlist.append(fam.famid)
+        checklist = set(Idlist)
+        for id_check in checklist:
+            count = 0
+            for id_checks in Idlist:
+                if id_check == id_checks:
+                    count +=1
+            if count > 1:
+                nouniquelist.append(id_check)
+        famList = gedHelper().MultipleidsDelete2(nouniquelist,famList)
+        return famList
+
+    def MultipleidsDelete(self,nouniquelist,indList):
         for ind in indList:
             count = 1
             for id_checks in nouniquelist:
                 if ind.indi == id_checks:
                         count += 1
-                if count > 1:
+                if count > 2:
                     indList.remove(ind)
         return indList
 
+    def MultipleidsDelete2(self,nouniquelist,famList):
+        for fam in famList:
+            count = 1
+            for id_checks in nouniquelist:
+                if  fam.famid == id_checks:
+                        count += 1
+                if count > 2:
+                    famList.remove(fam)
+        return famList
 
  
     #US23 Unique name and birth date
@@ -561,17 +573,13 @@ class gedHelper(object):
         return living
     
     #US31 List living single
-    def livingsingle(self, indList, famList):
-        living =[]
+    def livingsingle(self, indList):
         livingsingle =[]
         for ind in indList:
-            if ind.death != "not mentioned":
-                living.append(ind)
-        for ind in living:
-            if ind.marDate =="not mentioned":
-                if gedUtil().getAge(ind.birth) >30:
+            if ind.death != "not mentioned" and ind.marDate =="not mentioned" and gedUtil().getAge(ind) >30:
                     livingsingle.append(ind.name)
         return livingsingle
+
 
     #US32 List multiple births
     def multiplebirths(self, indList, famList):
@@ -666,7 +674,7 @@ class gedHelper(object):
         currentDay = datetime.datetime.now().day
         for fam in famList:
             # Check if the family is married and not divorced
-            if fam.marDate is not "not mentioned" and fam.divDate is "not mentioned":
+            if fam.marDate != "not mentioned" and fam.divDate == "not mentioned":
                 marriage = gedUtil().getDate(fam.marDate)
                 # If the month is later than the current, append it
                 if marriage.month > currentMonth:

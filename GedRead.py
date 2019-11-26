@@ -164,7 +164,8 @@ def gedHelperIndProcess()-> list:
         for i in indList:
             i.age = gh.LoadAgeForPerson(i)
         outputindList = copy.deepcopy(indList)
-#        outputindList = gh.noUnique_IDs(outputindList)
+#       outputindList = gh.noUnique_IDs(outputindList)
+#       famList = gh.noUnique_famIDs(famList)
         outputindList = gh.UniqueNameAndBirth(outputindList)
         outputindList = gh.correctGender(outputindList,famList)
         for i in indList:
@@ -260,12 +261,12 @@ def GedReader(file):
         print("=====Multiple Births======")
         multipes = gedHelper().multiplebirths(outputindList, outputfamList)
         for m in multipes:
-            print(m + " is living single")
+            print(m + " is Multiple Births")
     if outputindList is not None:
         print("=====Living Single======")
-        livingsing = gedHelper().livingsingle(outputindList, outputfamList)
+        livingsing = gedHelper().livingsingle(outputindList)
         for l in livingsing:
-            print(l + " is multiple birth")
+            print(l + " is living single")
     if outputindList is not None:
         print("=====Orphans List======")
         orphansList = gedHelper().listOrphans(outputindList)
