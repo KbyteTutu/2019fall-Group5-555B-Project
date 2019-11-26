@@ -5,8 +5,9 @@ from GedMembers import Valid
 from GedMembers import individual
 from GedMembers import family
 from GedHelper import gedHelper
+from GedUtil import gedUtil
 
-
+import datetime
 import traceback
 import copy
 import sys
@@ -106,9 +107,9 @@ def getIndInfoFromBlocks(blocks):
                 if infoLine[2] == 'NAME':
                     tempIndi.name = infoLine[4]#Kt
                 if infoLine[2] == 'BIRT\n':
-                    tempIndi.birth = getDate(infoBlock[index+1][4])#Kt
+                    tempIndi.birth = datetime.datetime.strftime(gedUtil().getDate(infoBlock[index+1][4]), "'%d %b %Y'")#Kt
                 if infoLine[2] == 'DEAT':
-                    tempIndi.death = getDate(infoBlock[index+1][4])#Kt
+                    tempIndi.death = datetime.datetime.strftime(gedUtil().getDate(infoBlock[index+1][4]), "'%d %b %Y'")#Kt
                 if infoLine[2] == 'FAMC':
                     tempIndi.familyC = infoLine[4]#Na
                 #if infoLine[2] == 'FAMS':
@@ -131,9 +132,9 @@ def getFamInfoFromBlocks(blocks):
                 if infoLine[2] == 'CHIL':
                     tempFam.children.append(infoLine[4])
                 if infoLine[2] == 'MARR\n':
-                    tempFam.marDate = getDate(infoBlock[index+1][4])
+                    tempFam.marDate = datetime.datetime.strftime(gedUtil().getDate(infoBlock[index+1][4]), "'%d %b %Y'")
                 if infoLine[2] == '_SEPR\n':
-                    tempFam.divDate = getDate(infoBlock[index+1][4])
+                    tempFam.divDate = datetime.datetime.strftime(gedUtil().getDate(infoBlock[index+1][4]), "'%d %b %Y'")
             famList.append(tempFam)
         else:
             print("Maximum amount of families stored!\n")
@@ -163,7 +164,8 @@ def gedHelperIndProcess()-> list:
         for i in indList:
             i.age = gh.LoadAgeForPerson(i)
         outputindList = copy.deepcopy(indList)
-        outputindList = gh.noUnique_IDs(outputindList)
+#       outputindList = gh.noUnique_IDs(outputindList)
+#       famList = gh.noUnique_famIDs(famList)
         outputindList = gh.UniqueNameAndBirth(outputindList)
         outputindList = gh.correctGender(outputindList,famList)
         for i in indList:
@@ -224,10 +226,10 @@ def GedReader(file):
         print("=====Individuals=====")
         for i in outputindList:
             i.printBriefInfo()
-        print("=====Deceased=====")
-        dead = gedHelper().getDeceased(outputindList)
-        for d in dead:
-            print(d)
+        # print("=====Deceased=====")
+        # dead = gedHelper().getDeceased(outputindList)
+        # for d in dead:
+        #     print(d)
     if outputindList is not None:
         print("=====Family=====")
         for j in outputfamList:
@@ -241,6 +243,8 @@ def GedReader(file):
     if outputindList is not None:
         print("=====Recent Survivors=====")
         gedHelper().recentSurvivors(outputindList, outputfamList)
+        print("=====Upcoming Birthdays=====")
+        gedHelper().upcomingBirthdays(outputindList)
         print("=====Living Couples=====")
         live = gedHelper().livingMarried(outputindList, outputfamList)
         for l in live:
@@ -257,17 +261,23 @@ def GedReader(file):
         print("=====Multiple Births======")
         multipes = gedHelper().multiplebirths(outputindList, outputfamList)
         for m in multipes:
-            print(m + "is living single")
+            print(m + " is Multiple Births")
     if outputindList is not None:
         print("=====Living Single======")
-        livingsing = gedHelper().livingsingle(outputindList, outputfamList)
+        livingsing = gedHelper().livingsingle(outputindList)
         for l in livingsing:
-            print(l + "is multiple birth")
-        
+            print(l + " is living single")
+    if outputindList is not None:
+        print("=====Orphans List======")
+        orphansList = gedHelper().listOrphans(outputindList)
+        for l in orphansList:
+            print(l + " is orphan")
+    if outputindList is not None:
+        print("=====List large age differences======")
+        largeDifferList = gedHelper().listLargeAgeDifference(outputindList,famList)
+        for f in largeDifferList:
+            print(f + " has large age differences")
 
 
 if __name__ == '__main__':
     GedReader(".\\TestGed\\MultiChild.ged")
-
-
-

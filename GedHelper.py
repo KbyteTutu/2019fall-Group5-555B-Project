@@ -3,6 +3,7 @@ __author__ = 'Group5'
 
 import datetime
 import copy
+
 from GedMembers import Valid
 from GedMembers import individual
 from GedMembers import family
@@ -164,10 +165,10 @@ class gedHelper(object):
 
 # US11 No bigamy
     def nobigamy(self,indList,famList) -> list:
-        outputindList = copy.deepcopy(famList)
+        outputindList = copy.deepcopy(indList)
+        husbandchecklist = []
+        wifechecklist = []
         for ind in indList:
-            husbandchecklist = []
-            wifechecklist = []
             husbandchecklist.append(ind.husbID)
             wifechecklist.append(ind.wifeID)
         husbandchecklist = set(husbandchecklist)
@@ -175,16 +176,16 @@ class gedHelper(object):
         for fam in famList:
             count = 0
             for check in husbandchecklist:
-                if fam.husband == check:
+                if ind.husbID == check:
                     count +=1
-                if count >0:
+                if count >1:
                  outputindList.remove(fam)
-        for fam in famList:
+        for fam in indList:
             count = 0
             for check in wifechecklist:
-                if fam.husband == check:
+                if ind.wifeID == check:
                     count += 1
-                if count > 0:
+                if count > 1:
                     outputindList.remove(fam)
         return outputindList
 
@@ -204,7 +205,7 @@ class gedHelper(object):
                     wife = ind
                 if ind.indi == family.children:
                     children == ind
-                if husband is not None and wife is not None and children is not None:
+                if husband !="not mentioned" and wife !="not mentioned" and children !="not mentioned":
                     break
 
         try:
@@ -265,6 +266,34 @@ class gedHelper(object):
                         break
         return outputindList
 
+    def FewerSiblings(self,indList,famList):
+        util = gedUtil()
+        outputindList = copy.deepcopy(famList)
+        for fam in famList:
+            if fam.children.count > 15:
+                outputindList.remove(fam)
+        return outputindList 
+	
+	#US16 Male Last Names
+    def MaleLastNames(self,indList,famList):
+        util = gedUtil()
+        outputindList = copy.deepcopy(famList)
+        husband = None
+        child = None
+        for family in famList:
+            for ind in indList:
+                if ind.indi == family.husband:
+                    husband = ind
+                    lastName = husband.name.split()[1]
+                    for child in family.children:
+                        for ind in indList:
+                            if ind.indi == family.children:
+                                child = ind
+                                if (child.sex == "M") and (child.name.split()[1] != lastName):
+                                    outputindList.remove(family)
+        return outputindList    
+		
+	
     #US17 No marriage to descendants
     def marriageToDescendant(self, indList, famList):
         for ind in indList:
@@ -328,10 +357,10 @@ class gedHelper(object):
             wife_mother = None
             wife_father = None
             for child_fam in famList:
-                if husband in child_fam.children:
+                if husband.indi in child_fam.children:
                     husband_mother = child_fam.wife
                     husband_father = child_fam.husband
-                if wife in child_fam.children:
+                if wife.indi in child_fam.children:
                     wife_mother = child_fam.wife
                     wife_father = child_fam.husband
                 if husband_mother is not None and wife_mother is not None:
@@ -375,10 +404,11 @@ class gedHelper(object):
             wife_mother = None
             wife_father = None
             for child_fam in famList:
-                if husband in child_fam.children:
+                #tu fix
+                if husband.indi in child_fam.children:
                     husband_mother = child_fam.wife
                     husband_father = child_fam.husband
-                if wife in child_fam.children:
+                if wife.indi in child_fam.children:
                     wife_mother = child_fam.wife
                     wife_father = child_fam.husband
                 if husband_mother is not None and wife_mother is not None:
@@ -399,34 +429,21 @@ class gedHelper(object):
 
     # US21 Correct gender for role
     def correctGender(self, indList, famList):
-            for family in famList:
-                husband = None
-                wife = None
-                for ind in indList:
-                    if ind.indi == family.husband:
-                        husband = ind
-                    if ind.indi == family.wife:
-                        wife = ind
-                    if husband is not None and wife is not None:
-                        break
-            try:
-                if (husband.sex) != "M":
-                    print(husband + "should be Male")
-                    husband.sex = "M"
-                    return_flag = False
-                if (wife.sex) != "F":
-                    print(wife + "should be Female")
-                    wife.sex = "F"
-                    return_flag = False
-            except:
-                print("incomplete data")
-            return indList
+            outputindList = copy.deepcopy(indList)
+            for ind in outputindList:
+                if ind.husbID !="not mentioned":
+                    if ind.sex =="F":
+                        ind.sex ="M"
+                elif ind.wifeID != "not mentioned":
+                    if ind.sex =="M":
+                        ind.sex ="F"
+            return outputindList
 
-    # US22 Unique IDs
-    def noUnique_IDs(self,indList) -> list:
+    # US22 Unique IDs and #US 24
+    def noUnique_IDs(self,indList):
         nouniquelist = []
-        for ind in indList:
-            Idlist = []
+        Idlist = []
+        for ind in indList:    
             Idlist.append(ind.indi)
         checklist = set(Idlist)
         for id_check in checklist:
@@ -434,21 +451,46 @@ class gedHelper(object):
             for id_checks in Idlist:
                 if id_check == id_checks:
                     count +=1
-            if count > 0:
+            if count > 1:
                 nouniquelist.append(id_check)
         indList = gedHelper().MultipleidsDelete(nouniquelist,indList)
         return indList
 
-    def MultipleidsDelete(self,nouniquelist,indList) ->list:
+    def noUnique_famIDs(self,famList):
+        nouniquelist = []
+        Idlist = []
+        for fam in famList:
+            Idlist.append(fam.famid)
+        checklist = set(Idlist)
+        for id_check in checklist:
+            count = 0
+            for id_checks in Idlist:
+                if id_check == id_checks:
+                    count +=1
+            if count > 1:
+                nouniquelist.append(id_check)
+        famList = gedHelper().MultipleidsDelete2(nouniquelist,famList)
+        return famList
+
+    def MultipleidsDelete(self,nouniquelist,indList):
         for ind in indList:
             count = 1
             for id_checks in nouniquelist:
                 if ind.indi == id_checks:
                         count += 1
-                if count > 1:
+                if count > 2:
                     indList.remove(ind)
         return indList
 
+    def MultipleidsDelete2(self,nouniquelist,famList):
+        for fam in famList:
+            count = 1
+            for id_checks in nouniquelist:
+                if  fam.famid == id_checks:
+                        count += 1
+                if count > 2:
+                    famList.remove(fam)
+        return famList
 
  
     #US23 Unique name and birth date
@@ -460,6 +502,24 @@ class gedHelper(object):
     def UniqueFamily(self,famList):
         return set(famList)
 
+    #US25 Unique child names in families
+    def UniqueChildName(self,famList,indList):
+        util = gedUtil()
+        outputindList = copy.deepcopy(famList)
+        for family in famList:
+            childName = []
+           
+            for child in family.children:
+                for ind in indList:
+                    if ind.indi == family.children:
+                        child == ind
+                        childName.append(child.name)
+                        
+            if(len(childName)!=(len(set(childName)))):
+                outputindList.remove(family)
+                break
+        return outputindList
+    
     #US27 Include person's current age when listing individuals.
     def LoadAgeForPerson(self,person):
         return gedUtil().getAge(person)
@@ -513,17 +573,13 @@ class gedHelper(object):
         return living
     
     #US31 List living single
-    def livingsingle(self, indList, famList):
-        living =[]
+    def livingsingle(self, indList):
         livingsingle =[]
         for ind in indList:
-            if ind.death != "not mentioned":
-                living.append(ind)
-        for ind in living:
-            if ind.marriageDate =="not mentioned":
-                if getAge(ind.birth) >30:
+            if ind.death != "not mentioned" and ind.marDate =="not mentioned" and gedUtil().getAge(ind) >30:
                     livingsingle.append(ind.name)
         return livingsingle
+
 
     #US32 List multiple births
     def multiplebirths(self, indList, famList):
@@ -540,6 +596,39 @@ class gedHelper(object):
                 if count > 1:
                     multiplebirth.append(ind.name)
         return multiplebirth      
+
+    #US33 List orphans
+    def listOrphans(self, indList):
+        childPrefix = []
+        orphanList = []
+        for person in indList:
+            if (person.age != 'ERROR: INVALID DATE') :
+                if int(person.age) < 18:
+                    childPrefix.append(person)
+        for child in childPrefix:
+            if child.family == "not mentioned":
+                orphanList.append(child)
+        return orphanList
+    
+    #US34 List large age differences
+    def listLargeAgeDifference(self, indList,famList):
+        re = []
+        for f in famList:
+            husAge = gedHelper().getIndi(indList,f.husband).age
+            wifAge = gedHelper().getIndi(indList,f.wife).age
+
+            if (husAge>wifAge):
+                if (husAge>= wifAge*2):
+                    re.append(f)
+            else:
+                if (wifAge>= husAge*2):
+                    re.append(f)
+        return re
+    
+    def getIndi(self,indList, indiStr):
+        for i in indList:
+            if i.indi == indiStr:
+                return i
 
     #US37 List recent survivors
     def recentSurvivors(self, indList, famList):
@@ -565,3 +654,36 @@ class gedHelper(object):
                                 print("-Surviving Descendants-")
                                 print(*fam.children, sep = ", ")
         return
+
+    #US38 List upcoming birthdays
+    def upcomingBirthdays(self, indList):
+        birthdays = []
+        for ind in indList:
+            if ind.death == "not mentioned" and gedUtil().dateWithin30Days(ind):
+                birthdays.append(ind)
+        if len(birthdays) > 0:
+            for ind in birthdays:
+                print(ind.name)
+        return
+    # US39 List Upcoming Anniversaries
+    def Anniversary(self, famList):
+        anniversaries = []
+        # Get the current day and month. Year does not matter
+        #fixed by tu
+        currentMonth = datetime.datetime.now().month
+        currentDay = datetime.datetime.now().day
+        for fam in famList:
+            # Check if the family is married and not divorced
+            if fam.marDate != "not mentioned" and fam.divDate == "not mentioned":
+                marriage = gedUtil().getDate(fam.marDate)
+                # If the month is later than the current, append it
+                if marriage.month > currentMonth:
+                    anniversaries.append(marriage)
+                # If the month is the current and the day is later, append it
+                if marriage.month == currentMonth and marriage.day > currentDay:
+                    anniversaries.append(marriage)
+        for ann in anniversaries:
+            print(ann)
+
+    #US 40 is in Util
+
