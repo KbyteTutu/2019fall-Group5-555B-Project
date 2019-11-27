@@ -513,7 +513,7 @@ class gedHelper(object):
                 for ind in indList:
                     if ind.indi == family.children:
                         child == ind
-                        childName.append(child.name)
+                        childName.append(child.name.split()[0])
                         
             if(len(childName)!=(len(set(childName)))):
                 outputindList.remove(family)
