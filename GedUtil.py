@@ -55,5 +55,4 @@ class gedUtil(object):
                 re = person.birth
                 break
         return re
-
     

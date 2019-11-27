@@ -170,11 +170,13 @@ def getFamInfoFromBlocks(blocks):
 # Cuz some data will add to individual after reading the family infos
 # We have to do data processing in seperate.
 def gedHelperIndProcess() -> list:
-    Log = "Operation Log: "
     try:
         gh = gedHelper()
-
         outputindList = copy.deepcopy(indList)
+        #US12
+        errorList.append(gh.validParentsage(indList,famList))
+        
+
         for i in indList:
             if gh.datebeforeCurrentdate(i) == False:
                 Log = "datebeforeCurrentdate - " + i.indi
@@ -204,16 +206,22 @@ def gedHelperIndProcess() -> list:
             # if gh.lessThan150Years(i) == False:
             #   errorList.append(Log)
 
+        #US11
         return outputindList
     except Exception:
-        print(Log)
+        print("Bug")
         print(traceback.format_exc())
 
 
 def gedHelperFamProcess() -> list:
     gh = gedHelper()
     outputfamList = copy.deepcopy(famList)
-    # gh.validParentsage(indList,outputfamList)
+    outputfamList = gh.nobigamy(indList,famList)
+    outputfamList = gh.MultipleBirthsDelete(indList,famList)
+    outputfamList = gh.SiblingsSpacing(indList,famList)
+    gh.marriageToDescendant(indList,famList)
+    gh.siblingsMarried(indList,famList)
+    gh.AuntsAndUncles(indList,famList)
 
     return outputfamList
 
@@ -221,12 +229,10 @@ def gedHelperFamProcess() -> list:
 def GedReader(file):
     readGed(file)
     # gedHelper().validate_family(indList,famList)
-    gedHelper().validBirth(indList, famList)
-    gedHelper().validMarriage(indList, famList)
-    outputindList = gedHelperIndProcess()
-    outputfamList = gedHelperFamProcess()
+    outputindList = copy.deepcopy(indList)
+    outputfamList = copy.deepcopy(famList)
 
-    print("=====Individual List Table=====")
+    print("=====Origin Individual List Table=====")
     indiTable = PrettyTable(["indi",
                              "name",
                              "sex",
@@ -261,7 +267,7 @@ def GedReader(file):
 
         print(indiTable)
 
-    print("=====Family List Table=====")
+    print("=====Origin Family List Table=====")
     if outputindList is not None:
         famTable = PrettyTable([
             "famid",
@@ -280,8 +286,16 @@ def GedReader(file):
             ])
         print(famTable)
     print("=====Error List=====")
+
+    gedHelper().validBirth(indList, famList)
+    gedHelper().validMarriage(indList, famList)
+    outputindList = gedHelperIndProcess()
+    outputfamList = gedHelperFamProcess()
     for error in errorList:
         print(error)
+    
+
+    
 
 
 if __name__ == '__main__':

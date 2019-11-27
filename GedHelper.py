@@ -16,7 +16,7 @@ class gedHelper(object):
     def __init__(self):
         pass
 
-#Rx
+# Rx
     # US01 Date before CurrentDate
     def datebeforeCurrentdate(self, person):
         util = gedUtil()
@@ -40,8 +40,8 @@ class gedHelper(object):
         else:
             return gedUtil().dateCompare(person.marDate, person.birth)
 
-#/Rx
-#Kt
+# /Rx
+# Kt
     # US03 Birth before death
     def birthBeforeDeath(self, person):
         if (person.birth == "not mentioned")or(person.death == "not mentioned"):
@@ -55,9 +55,10 @@ class gedHelper(object):
             return True
         else:
             return gedUtil().dateCompare(person.divDate, person.marDate)
-#/Kt
-#Sb
+# /Kt
+# Sb
         # US05 Marriage before death
+
     def marriageBeforeDeath(self, person):
         if (person.marDate == "not mentioned")or(person.death == "not mentioned"):
             return True
@@ -71,8 +72,8 @@ class gedHelper(object):
             return True
         else:
             return gedUtil().dateCompare(person.death, person.divDate)
-#/Sb
-#Cs
+# /Sb
+# Cs
     # US07 Less than 150 years old
 
     def lessThan150Years(self, person):
@@ -92,8 +93,8 @@ class gedHelper(object):
                 return False
 
     # US08 Birth before marriage of parents
-#/Cs
-#Na
+# /Cs
+# Na
     # US09 Birth before death of parents
     def validBirth(self, indList, famList):
         return_flag = True
@@ -137,7 +138,7 @@ class gedHelper(object):
                               father.name + " and " + mother.name)
                         return_flag = False
                 except:
-                    print("")
+                    pass
         return return_flag
 
     # US10 Marriage after 14
@@ -168,6 +169,277 @@ class gedHelper(object):
                 print(wife + " is married before 14 years old")
                 return_flag = False
         except:
-            print("")
+            pass
         return return_flag
-#/Na
+# /Na
+
+
+# Sprint2
+
+# Rh
+    # US11 No bigamy
+
+
+    def nobigamy(self, indList, famList) -> list:
+        outputindList = copy.deepcopy(famList)
+        husbandchecklist = []
+        wifechecklist = []
+        for ind in indList:
+            husbandchecklist.append(ind.husbID)
+            wifechecklist.append(ind.wifeID)
+        husbandchecklist = set(husbandchecklist)
+        wifechecklist = set(wifechecklist)
+        for fam in famList:
+            count = 0
+            for check in husbandchecklist:
+                if fam.husband == check:
+                    count += 1
+                if count > 1:
+                    if fam in outputindList:
+                        outputindList.remove(fam)
+        for fam in famList:
+            count = 0
+            for check in wifechecklist:
+                if fam.husband == check:
+                    count += 1
+                if count > 1:
+                    if fam in outputindList:
+                        outputindList.remove(fam)
+        return outputindList
+
+    # US12 Parents not too old
+    def validParentsage(self, indList, famList):
+        return_str = ""
+        util = gedUtil()
+
+        for family in famList:
+            temp = individual("Temp", name="Temp")
+            husband = individual("Temp", name="Temp")
+            wife = individual("Temp", name="Temp")
+            children = individual("Temp", name="Temp")
+            for ind in indList:
+                if ind.indi == family.husband:
+                    husband = ind
+                if ind.indi == family.wife:
+                    wife = ind
+                if ind.indi == family.children:
+                    children == ind
+                if husband is not None and wife is not None and children is not None:
+                    break
+            if  husband != temp:
+                    if (util.getAge(husband.birth) - util.getAge(children.birth)) > 80:
+                        return_str += family.famid + "- father is too old\r\n"
+            if  wife!=temp:
+                    if (util.getAge(wife.birth) - util.getAge(children.birth)) > 60:
+                        return_str += family.famid + "- mother is too old\r\n"
+            
+            return return_str
+# /#Rh
+
+# Kt
+
+    # US13 Siblings spacing
+    def SiblingsSpacing(self, indList, famList):
+        util = gedUtil()
+        outputFam = copy.deepcopy(famList)
+        for fam in famList:
+            childBirthList = []
+            if len(fam.children) >= 0:
+                for child in fam.children:
+                    birthStr = util.getBirthStrByIndi(child, indList)
+                    if birthStr != "not mentioned":
+                        childBirthList.append(util.getDate(birthStr))
+            for Date in childBirthList:
+                for Date2 in childBirthList:
+                    if gedHelper().SiblingsSpacingUtil(Date, Date2):
+                        if fam in outputFam:
+                            outputFam.remove(fam)
+                            print(fam.famid+"- Siblings spacing ")
+                            break
+        return outputFam
+
+    def SiblingsSpacingUtil(self, date1, date2):
+        d = date1-date2
+        d = abs(d)
+        if (d.days > 2) and (d.days < 240):
+            return True  # this means wrong info
+        else:
+            return False
+
+    # US14 Multiple births <= 5
+    def MultipleBirthsDelete(self, indList, famList):
+        util = gedUtil()
+        outputindList = copy.deepcopy(famList)
+        for fam in famList:
+            childBirthList = []
+
+            if len(fam.children) >= 5:  # only consider this situation
+                for child in fam.children:
+                    birthStr = util.getBirthStrByIndi(child, indList)
+                    if birthStr != "Not Mentioned":
+                        childBirthList.append(birthStr)
+            if len(childBirthList) > 5:  # valid record more than 4
+                for item in childBirthList:
+                    if childBirthList.count(item) > 5:
+                        outputindList.remove(fam)
+                        print(fam.famid+"- Multiple births >5 ")
+                        break
+        return outputindList
+
+# /Kt
+
+# Sb
+    def FewerSiblings(self, indList, famList):
+        util = gedUtil()
+        outputindList = copy.deepcopy(famList)
+        for fam in famList:
+            if fam.children.count > 15:
+                outputindList.remove(fam)
+        return outputindList
+
+        # US16 Male Last Names
+    def MaleLastNames(self, indList, famList):
+        util = gedUtil()
+        outputindList = copy.deepcopy(famList)
+        husband = None
+        child = None
+        for family in famList:
+            for ind in indList:
+                if ind.indi == family.husband:
+                    husband = ind
+                    lastName = husband.name.split()[1]
+                    for child in family.children:
+                        for ind in indList:
+                            if ind.indi == family.children:
+                                child = ind
+                                if (child.sex == "M") and (child.name.split()[1] != lastName):
+                                    outputindList.remove(family)
+        return outputindList
+# Sb
+
+# Cs
+    # US17 No marriage to descendants
+    def marriageToDescendant(self, indList, famList):
+        for ind in indList:
+            if ind.family != "not mentioned":
+                for family in famList:
+                    fatherID = []
+                    motherID = []
+                    descendantID = []
+                    for ind in ind.family:
+                        if family.famid == ind.family:
+                            fatherID.append(family.husband)
+                            motherID.append(family.wife)
+                            descendantID.append(ind)
+                    for ind in descendantID:
+                        for i in fatherID:
+                            if ind.husbID == i:
+                                print(ind + " is married to an ancestor")
+                        for i in motherID:
+                            if ind.wifeID == i:
+                                print(ind + " is married to an ancestor")
+
+
+    # US18 Siblings should not marry
+
+    def siblingsMarried(self, indList, famList):
+        for fam in famList:
+            childrenList = []
+            for ind in indList:
+                for child in fam.children:
+                    if ind.indi == child:
+                        childrenList.append(ind)
+            for i in childrenList:
+                for j in childrenList:
+                    if (i.husbID == j.indi or i.wifeID == j.indi or i.indi == j.husbID or i.indi == j.wifeID):
+                        print(i + " and " + j + " are married siblings.")
+
+# /Cs
+# Na
+    # US19 First Cousins Should Not Marry
+
+    def cousinsMarried(self, indList, famList):
+        TempNoneIndi = individual("temp")
+
+        for family in famList:
+            # Get the couple's IDs
+            husband = TempNoneIndi
+            wife = TempNoneIndi
+            for ind in indList:
+                if ind.indi == family.husband:
+                    husband = ind
+                if ind.indi == family.wife:
+                    wife = ind
+                if husband is not TempNoneIndi and wife is not TempNoneIndi:
+                    break
+
+            # Get the parents' IDs
+            husband_mother = TempNoneIndi
+            husband_father = TempNoneIndi
+            wife_mother = TempNoneIndi
+            wife_father = TempNoneIndi
+            for child_fam in famList:
+                if husband.indi in child_fam.children:
+                    husband_mother = child_fam.wife
+                    husband_father = child_fam.husband
+                if wife.indi in child_fam.children:
+                    wife_mother = child_fam.wife
+                    wife_father = child_fam.husband
+                if husband_mother is not TempNoneIndi and wife_mother is not TempNoneIndi:
+                    break
+
+            try:
+                # Husband's mother is a sister to one of the wife's parents
+                if husband_mother.familyC == wife_mother.familyC or husband_mother.familyC == wife_father.familyC:
+                    print(family.famid +"- First Cousins Should Not Marry")
+
+            # Husband's father is a brother to one of the wife's parents
+                if husband_father.familyC == wife_mother.familyC or husband_father.familyC == wife_father.familyC:
+                    print(family.famid +"- First Cousins Should Not Marry")
+            except:
+                pass
+
+
+    # US20 Aunts and Uncles
+    def AuntsAndUncles(self, indList, famList):
+        util = gedUtil()
+        TempNoneIndi = individual("temp")
+        for family in famList:
+
+            # Get the couple's IDs
+            husband = TempNoneIndi
+            wife = TempNoneIndi
+            for ind in indList:
+                if ind.indi == family.husband:
+                    husband = ind
+                if ind.indi == family.wife:
+                    wife = ind
+                if husband is not TempNoneIndi and wife is not TempNoneIndi:
+                    break
+
+            # Get the parents' IDs
+            husband_mother = TempNoneIndi
+            husband_father = TempNoneIndi
+            wife_mother = TempNoneIndi
+            wife_father = TempNoneIndi
+            for child_fam in famList:
+                # tu fix
+                if husband.indi in child_fam.children:
+                    husband_mother = child_fam.wife
+                    husband_father = child_fam.husband
+                if wife.indi in child_fam.children:
+                    wife_mother = child_fam.wife
+                    wife_father = child_fam.husband
+                if husband_mother is not TempNoneIndi and wife_mother is not TempNoneIndi:
+                    break
+            try:
+                # Wife is a sister to one of the husband's parents
+                if husband_mother.familyC == wife.familyC or husband_father == wife.familyC:
+                     print(family.famid +"- Aunts and uncles should not marry their nieces or nephews")
+
+                # Husband is a brother to one of the wife's parents
+                if wife_mother.familyC == husband.familyC or wife_father == husband.familyC:
+                    print(family.famid +"- Aunts and uncles should not marry their nieces or nephews")
+            except:
+                pass
+# /Na
