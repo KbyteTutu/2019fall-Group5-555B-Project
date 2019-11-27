@@ -557,4 +557,5 @@ class gedHelper(object):
                     anniversaries.append(marriage)
         for ann in anniversaries:
             print(ann)
+        return anniversaries
 
