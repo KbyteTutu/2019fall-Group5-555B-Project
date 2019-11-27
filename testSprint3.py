@@ -22,7 +22,7 @@ class test_ged(unittest.TestCase):
         fam2 = family("No2",  husband="Zhang 4", wife="Zhang 3")
         indList = [indi1,indi2,indi3,indi4]
         famList = [fam1,fam2]
-        output = gedHelper().correctGender(indList,famList)
+        self.assertTrue(gedHelper().correctGender(indList,famList))
 
 
     def test_noUnique_IDs(self):
@@ -33,8 +33,8 @@ class test_ged(unittest.TestCase):
         fam2 = family("No1",  husband="Zhang 4", wife="Zhang 3")
         indList = [indi1,indi2,indi3]
         famList = [fam1,fam2]
-        output = gedHelper().noUnique_IDs(indList)
-        output2 = gedHelper().noUnique_famIDs(famList)
+        self.assertTrue(gedHelper().noUnique_IDs(indList))
+        self.assertTrue(gedHelper().noUnique_famIDs(famList))
 
 if __name__ == '__main__':
     print('Running unit tests')

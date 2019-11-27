@@ -23,9 +23,7 @@ class test_ged(unittest.TestCase):
         fam3 = family("No3",  husband="Zhang 4",  wife="Zhang 1")
         indList = [indi1,indi2,indi3,indi4]
         famList = [fam1,fam2,fam3]
-        output = gedHelper().nobigamy(indList,famList)
-        for element in output:
-          print(element.husband)
+        self.assertTrue(gedHelper().nobigamy(indList,famList))
 
     def test_validParentsage(self):
         indi1 = individual("No1", name="Zhang 1", wifeID="Zhang 1", birth="10 OCT 1900")

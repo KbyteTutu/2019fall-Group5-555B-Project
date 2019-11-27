@@ -20,10 +20,8 @@ class test_ged(unittest.TestCase):
         indi4 = individual("No4", name="Zhang 4", husbID="Zhang 4", birth="10 OCT 1916", death="")
         indi5 = individual("No5", name="Zhang 5", birth="10 OCT 1970", death="")
         indList = [indi1,indi2,indi3,indi4,indi5]
-        print("=====Living Single======")
-        livingsing = gedHelper().livingsingle(indList)
-        for l in livingsing:
-            print(l + " is living single")
+        self.assertTrue(gedHelper().livingsingle(indList))
+
 
     def test_multiplebirths(self):
         indi1 = individual("No1", name="Zhang 1", wifeID="Zhang 1", birth="10 OCT 1900")
@@ -33,10 +31,8 @@ class test_ged(unittest.TestCase):
         fam1 = family("No1",  husband="Zhang 2",  wife="Zhang 1", children="Zhang 3")
         indList = [indi1,indi2,indi3,indi4]
         famList = [fam1]
-        print("=====Multiple Births======")
-        multipes = gedHelper().multiplebirths(indList, famList)
-        for m in multipes:
-                print(m + " is Multiple Birth")
+        self.assertTrue(gedHelper().multiplebirths(indList, famList))
+
 
 
 if __name__ == '__main__':
