@@ -86,7 +86,7 @@ class family(object):
         self.famid = famid
         self.husband = husband
         self.wife = wife
-        self.children = []
+        self.children = children
         self.famlyNickName = familyNickname
         self.marDate = marDate
         self.divDate = divDate

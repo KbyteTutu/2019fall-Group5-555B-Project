@@ -22,10 +22,9 @@ class gedUtil(object):
     #Used for U37
     def dateLessThanThirtyDays(self,date1):
         try:
-            a = datetime.datetime.strptime(date1,'%d %m %Y')
-            b = datetime.datetime.now()
-            c = b - a
-            return c.days <= 30
+            a = datetime.strptime(date1,'%d %m %Y') + timedelta(days = 30)
+            b = datetime.now()
+            return a >= b
         except:
             print("Wrong Input")
 
@@ -39,7 +38,7 @@ class gedUtil(object):
             checkDay = datetime.datetime.now().day
             check = 0 + timedelta(checkMonth) + timedelta(checkDay)
             result = check - birth
-            return result.days <= 30 and result.days > 0
+            return result.days >= 30 or result.days < 0
         except:
             print("Wrong Input")
 

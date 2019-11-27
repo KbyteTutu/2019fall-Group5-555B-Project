@@ -5,87 +5,83 @@ import GedRead
 from GedMembers import Valid
 from GedMembers import individual
 from GedMembers import family
+from GedHelper import gedHelper
+from GedUtil import gedUtil
 #from pytest import ExitCode
 
 class test_ged(unittest.TestCase):
-    def test_read_ged_invalidity(self):
-        GedRead.indList = []
-        GedRead.famList = []
-        GedRead.linedataList = [] 
-        self.assertEqual(GedRead.readGed('24234231234.ged'), 'invalid')
+    
+    #US07
+    def test_less_than_150_years(self):
+        indi1 = individual("No1", name="Old", birth="1 JAN 1800")
+        output = gedHelper().lessThan150Years(indi1)
+        self.assertTrue(output == False)
 
-    def test_read_ged_validity(self):
-        GedRead.indList = []
-        GedRead.famList = []
-        GedRead.linedataList = [] 
-        self.assertEqual(GedRead.readGed('Group 5 GED.ged'), 'valid')
+    #US08
+    def test_birth_before_marriage(self):
+        indi1 = individual("No1", name="Mother", husbID="No2", marrigeDate="1 OCT 1990", family="1", familyC="1")
+        indi2 = individual("No2", name="Father", wifeID="No1", marrigeDate="1 OCT 1990", family="1", familyC="1")
+        indi3 = individual("No3", name="Child", birth="2 OCT 1990", family="1", familyC="1")
+        fam1 = family("1", husband="No2", wife="No1")
+        indList1 = [indi1, indi2, indi3]
+        famList1 = [fam1]
+        output = gedHelper().validMarriage(indList1, famList1)
+        self.assertTrue(output == True)
 
-    def test_sameID_individual(self):
-        GedRead.indList = []
-        GedRead.famList = []
-        GedRead.linedataList = [] 
-        temp = []
-        GedRead.readGed('SameIDDIfferentName.ged')
-        for j in GedRead.indList:
-            if j.name is not None:
-                temp.append(j.name)
-        self.assertNotIn('Robert /Smith/', temp)    
+    #US17
+    def test_no_marriage_to_descendants(self):
+        indi1 = individual("No1", name="Mother", husbID="No2", marrigeDate="1 OCT 1990", family="1", familyC="1")
+        indi2 = individual("No2", name="Father", wifeID="No1", marrigeDate="1 OCT 1990", family="1", familyC="1")
+        indi3 = individual("No3", name="Child", birth="2 OCT 1990", family="1", familyC="1", husbID="No2")
+        fam1 = family("1", husband="No2", wife="No1")
+        indList1 = [indi1, indi2, indi3]
+        famList1 = [fam1]
+        output = gedHelper().marriageToDescendant(indList1, famList1)
+        self.assertTrue(output == False)
 
-    def test_sameName_individual(self):
-        GedRead.indList = []
-        GedRead.famList = []
-        GedRead.linedataList = [] 
-        temp = []
-        GedRead.readGed('SameNameDifferentId.ged')
-        for j in GedRead.indList:
-            if j.indi is not None:
-                temp.append(j.indi)
-        self.assertNotIn('@I2@', temp)
+    #US18
+    def test_sibling_marriage(self):
+        indi1 = individual("No1", name="Mother", husbID="No2", family="1",)
+        indi2 = individual("No2", name="Father", wifeID="No1", family="1")
+        indi3 = individual("No3", name="Brother", family="1", wifeID="No4")
+        indi4 = individual("No4", name="Sister", family="1", husbID="No3")
+        fam1 = family("1", wife="No1", husband="No2", children=[indi3.indi, indi4.indi])
+        indList1 = [indi1, indi2, indi3, indi4]
+        famList1 = [fam1]
+        output = gedHelper().siblingsMarried(indList1, famList1)
+        self.assertTrue(output == False)
 
-    #def test_over_fivethousand_ind(self):
-    #    GedRead.indList = []
-    #    GedRead.famList = []
-    #    GedRead.linedataList = []
-    #    temp = []
-    #    GedRead.readGed('Over 5000 Ind 1000 Fam.ged')
-    #    for j in GedRead.indList:
-    #        if j.name is not None:
-    #            temp.append(j.name)
-    #    self.assertNotIn('Name is: 5001 /5001/', temp)
-    #                                                       WARNING THE ABOVE AND BELOW TESTS WILL RUN FOR A WHILE UNCOMMENT THEM IF PREPARED TO WAIT   
-    #def test_over_thousand_fam(self):
-    #    GedRead.indList = []
-    #    GedRead.famList = []
-    #    GedRead.linedataList = []
-    #    temp = []
-    #    GedRead.readGed('Over 5000 Ind 1000 Fam.ged')
-    #    for j in GedRead.indList:
-    #        if j.indi is not None:
-    #            temp.append(j.indi)
-    #    self.assertNotIn('@F1001@', temp)
+    #US27
+    def test_include_ind_age(self):
+        indi1 = individual("No1", birth="2 NOV 1995")
+        output = gedUtil().getAge(indi1)
+        self.assertTrue(output == 24)
 
-    # def test_sameID_family(self):
-    #     GedRead.indList = []
-    #     GedRead.famList = []
-    #     GedRead.linedataList = []
-    #     temp = []
-    #     GedRead.readGed('SameIDFamily.ged')
-    #     for j in GedRead.famList:
-    #         if j.wifeN is not None:
-    #             temp.append(j.wifeN)
-    #     print(*temp, sep = '\n')
-    #     self.assertNotIn('Tina /Bush/', temp)
+    #US28
+    def test_order_siblings_by_age(self):
+        indi1 = individual("No1", name="Child1", family="1", birth="1 JAN 1995")
+        indi2 = individual("No2", name="Child2", family="1", birth="1 JAN 1996")
+        indi3 = individual("No3", name="Child3", family="1", birth="1 JAN 1994")
+        fam1 = family("1", children=[indi1.indi, indi2.indi, indi3.indi])
+        indList1 = [indi1, indi2, indi3]
+        output = gedHelper().orderSibling(indList1, fam1)
+        self.assertTrue(output[0] == indi3)
+        self.assertTrue(output[1] == indi1)
+        self.assertTrue(output[2] == indi2)
 
- #Testing create new class and see if the input data is right and the missing data is showing in defualt value
-    def test_create_class(self):
-        print("~~~Test Create~~~~")
-        testIndi = individual(indi="test",name="test")
-        testIndi.printInfo()
-        self.assertEqual(testIndi.indi,"test")
-        testFamily = family(famid="testFam",wife="Godzilla")
-        testFamily.printBriefInfo()
-        self.assertEqual(testFamily.wife,"Godzilla")
-        print("~~~Test Create~~~~")
+    #US37
+    def test_list_recent_survivors(self):
+        indi1 = individual("No1", death="23 NOV 2019")
+        output = gedUtil().dateLessThanThirtyDays(indi1.death)
+        self.assertTrue(output == True)
+
+    #US38
+    def test_list_upcoming_birthdays(self):
+        indi1 = individual("No1", birth="1 DEC 1999", name="1")
+        indi2 = individual("No2", birth="4 APR 1998", name="2")
+        indList1 = [indi1, indi2]
+        output = gedHelper().upcomingBirthdays(indList1)
+        self.assertTrue(indi2 not in output)
 
 if __name__ == '__main__':
     print('Running unit tests')

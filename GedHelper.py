@@ -97,11 +97,12 @@ class gedHelper(object):
                 motherID = None
                 fam = None
                 marriage = None
+                child = None
 
                 for family in famList:
                     if family.famid == ind.familyC:
-                        fatherID = family.husband
-                        motherID = family.wife
+                        fatherID = family.husbID
+                        motherID = family.wifeID
                         fam = family
                         break
 
@@ -112,6 +113,9 @@ class gedHelper(object):
                     if inds.indi == motherID:
                         mother = inds
                         marriage = inds.marDate
+                    if inds.indi != fatherID and inds.indi != motherID:
+                        child = inds
+
 
                 try:
                     if util.getDate(father.death) is not None and util.getDate(father.death) < util.getDate(ind.birth) - datetime.timedelta(days=266):
@@ -123,7 +127,7 @@ class gedHelper(object):
                         print("Child is born after death of " + mother.name)
                         return_flag = False
 
-                    if util.getDate(ind.birth) < util.getDate(marriage):
+                    if util.getDate(child.birth) < util.getDate(marriage):
                         print("Child is born before marriage of " +
                               father.name + " and " + mother.name)
                         return_flag = False
@@ -273,19 +277,19 @@ class gedHelper(object):
                     fatherID = []
                     motherID = []
                     descendantID = []
-                    for ind in ind.family:
-                        if family.famid == ind.family:
+                    for ind in indList:
+                        if str(family.famid) == str(ind.family):
                             fatherID.append(family.husband)
                             motherID.append(family.wife)
                             descendantID.append(ind)
                     for ind in descendantID:
                         for i in fatherID:
                             if ind.husbID == i:
-                                print(ind + " is married to an ancestor")
+                                print(ind, " is married to an ancestor")
                                 return False
                         for i in motherID:
                             if ind.wifeID == i:
-                                print(ind + " is married to an ancestor")
+                                print(ind, " is married to an ancestor")
                                 return False
         return True
 
@@ -297,11 +301,11 @@ class gedHelper(object):
             for ind in indList:
                 for child in fam.children:
                     if ind.indi == child:
-                        childrenList.append(ind)         
+                        childrenList.append(ind)        
             for i in childrenList:
                 for j in childrenList:
                     if (i.husbID == j.indi or i.wifeID == j.indi or i.indi == j.husbID or i.indi == j.wifeID):
-                        print(i + " and " + j + " are married siblings.")
+                        print(i, " and ", j, " are married siblings.")
                         return False
         return True
             
@@ -483,6 +487,7 @@ class gedHelper(object):
                 if util.getAge(sibling) > util.getAge(oldest):
                     oldest = sibling
             ordered.append(siblings.pop(siblings.index(oldest)))
+        print(ordered)
         return ordered
             
     #US29 List Deceased
@@ -546,4 +551,4 @@ class gedHelper(object):
         if len(birthdays) > 0:
             for ind in birthdays:
                 print(ind.name)
-        return
+        return birthdays
