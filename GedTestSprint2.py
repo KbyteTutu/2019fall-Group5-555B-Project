@@ -95,6 +95,120 @@ class test_ged(unittest.TestCase):
         self.assertFalse(famList == famListOrigin)
 
 
+    #Na
+    def test_cousinsMarried(self):
+        individuals = []
+        families = []
+        indi_1 = individual("1", name = "1", birth = "14 SEPT 1930", marrigeDate="14 SEPT 1950", family="2")
+        indi_1.familyC = "1"
+        indi_2 = individual("2", name ="2", birth = "15 SEPT 1930", marrigeDate="14 SEPT 1950", family="2")
+        indi_2.familyC = "0"
+        indi_3 = individual("3", name ="3", birth ="16 SEPT 1930", marrigeDate ="16 SEPT 1950", family="3")
+        indi_3.familyC = "1"
+        indi_4 = individual("4", name ="4", birth ="17 SEPT 1930", marrigeDate ="16 SEPT 1950", family="3")
+        indi_4.familyC = "0"
+        indi_5 = individual("5", name ="5", birth ="18 SEPT 1980", marrigeDate ="18 SEPT 2000", family="4")
+        indi_5.familyC = "2"
+        indi_6 = individual("6", name="6", birth ="19 SEPT 1980", marrigeDate ="18 SEPT 2000", family="4")
+        indi_6.familyC = "3"
+        individuals.append(indi_1)
+        individuals.append(indi_2)
+        individuals.append(indi_3)
+        individuals.append(indi_4)
+        individuals.append(indi_5)
+        individuals.append(indi_6)
+        fam_0 = family("0", children=["2", "4"])
+        fam_1 = family("1", children=["1", "3"])
+        fam_2 = family("2", husband="1", wife="2", children=["5"])
+        fam_3 = family("3", husband="3", wife="4", children=["6"])
+        fam_4 = family("4", husband="5", wife="6")
+        families.append(fam_0)
+        families.append(fam_1)
+        families.append(fam_2)
+        families.append(fam_3)
+        families.append(fam_4)
+        self.assertFalse(gedHelper().cousinsMarried(individuals,families))
+        individuals = []
+        families = []
+        indi_1 = individual("1", name = "1", birth = "14 SEPT 1930", marrigeDate="14 SEPT 1950", family="2")
+        indi_1.familyC = "1"
+        indi_2 = individual("2", name ="2", birth = "15 SEPT 1930", marrigeDate="14 SEPT 1950", family="2")
+        indi_2.familyC = "0"
+        indi_3 = individual("3", name ="3", birth ="16 SEPT 1930", marrigeDate ="16 SEPT 1950", family="3")
+        indi_3.familyC = "1"
+        indi_4 = individual("4", name ="4", birth ="17 SEPT 1930", marrigeDate ="16 SEPT 1950", family="3")
+        indi_4.familyC = "0"
+        individuals.append(indi_1)
+        individuals.append(indi_2)
+        individuals.append(indi_3)
+        individuals.append(indi_4)
+        fam_0 = family("0", children=["2", "4"])
+        fam_1 = family("1", children=["1", "3"])
+        fam_2 = family("2", husband="1", wife="2")
+        fam_3 = family("3", husband="3", wife="4")
+        families.append(fam_0)
+        families.append(fam_1)
+        families.append(fam_2)
+        families.append(fam_3)
+        self.assertFalse(gedHelper().cousinsMarried(individuals,families))
+
+    def test_AuntsAndUncles(self):
+        individuals = []
+        families = []
+        indi_1 = individual("1", name = "1", birth = "14 SEPT 1930", marrigeDate="14 SEPT 1950", family="2")
+        indi_1.familyC = "1"
+        indi_2 = individual("2", name ="2", birth = "15 SEPT 1930", marrigeDate="14 SEPT 1950", family="2")
+        indi_2.familyC = "0"
+        indi_3 = individual("3", name ="3", birth ="16 SEPT 1930", marrigeDate ="16 SEPT 1950", family="3")
+        indi_3.familyC = "1"
+        indi_4 = individual("4", name ="4", birth ="17 SEPT 1930", marrigeDate ="16 SEPT 1950", family="3")
+        indi_4.familyC = "0"
+        indi_5 = individual("5", name ="5", birth ="18 SEPT 1980", marrigeDate ="18 SEPT 2000", family="4")
+        indi_5.familyC = "2"
+        indi_6 = individual("6", name="6", birth ="19 SEPT 1980", marrigeDate ="18 SEPT 2000", family="4")
+        indi_6.familyC = "0"
+        individuals.append(indi_1)
+        individuals.append(indi_2)
+        individuals.append(indi_3)
+        individuals.append(indi_4)
+        individuals.append(indi_5)
+        individuals.append(indi_6)
+        fam_0 = family("0", children=["2", "4", "6"])
+        fam_1 = family("1", children=["1", "3"])
+        fam_2 = family("2", husband="1", wife="2", children=["5"])
+        fam_3 = family("3", husband="3", wife="4")
+        fam_4 = family("4", husband="5", wife="6")
+        families.append(fam_0)
+        families.append(fam_1)
+        families.append(fam_2)
+        families.append(fam_3)
+        families.append(fam_4)
+        self.assertFalse(gedHelper().AuntsAndUncles(individuals,families))
+        individuals = []
+        families = []
+        indi_1 = individual("1", name = "1", birth = "14 SEPT 1930", marrigeDate="14 SEPT 1950", family="2")
+        indi_1.familyC = "1"
+        indi_2 = individual("2", name ="2", birth = "15 SEPT 1930", marrigeDate="14 SEPT 1950", family="2")
+        indi_2.familyC = "0"
+        indi_3 = individual("3", name ="3", birth ="16 SEPT 1930", marrigeDate ="16 SEPT 1950", family="3")
+        indi_3.familyC = "1"
+        indi_4 = individual("4", name ="4", birth ="17 SEPT 1930", marrigeDate ="16 SEPT 1950", family="3")
+        indi_4.familyC = "0"
+        individuals.append(indi_1)
+        individuals.append(indi_2)
+        individuals.append(indi_3)
+        individuals.append(indi_4)
+        fam_0 = family("0", children=["2", "4"])
+        fam_1 = family("1", children=["1", "3"])
+        fam_2 = family("2", husband="1", wife="2")
+        fam_3 = family("3", husband="3", wife="4")
+        families.append(fam_0)
+        families.append(fam_1)
+        families.append(fam_2)
+        families.append(fam_3)
+        self.assertFalse(gedHelper().AuntsAndUncles(individuals,families))
+
+
         
     
 if __name__ == '__main__':
