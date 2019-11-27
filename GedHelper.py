@@ -164,8 +164,8 @@ class gedHelper(object):
         return return_flag
 
 # US11 No bigamy
-    def nobigamy(self,indList,famList) -> list:
-        outputindList = copy.deepcopy(indList)
+    def nobigamy(self,indList,famList):
+        outputindList = copy.deepcopy(famList)
         husbandchecklist = []
         wifechecklist = []
         for ind in indList:
@@ -173,21 +173,24 @@ class gedHelper(object):
             wifechecklist.append(ind.wifeID)
         husbandchecklist = set(husbandchecklist)
         wifechecklist = set(wifechecklist)
-        for fam in famList:
+        for check in husbandchecklist:
             count = 0
-            for check in husbandchecklist:
-                if ind.husbID == check:
+            for fam in famList:
+                if fam.husband == check:
                     count +=1
-                if count >1:
-                 outputindList.remove(fam)
-        for fam in indList:
+                if count > 1:
+                     if fam in outputindList:
+                         outputindList.remove(fam)
+        for check in wifechecklist:
             count = 0
-            for check in wifechecklist:
-                if ind.wifeID == check:
+            for fam in famList:
+                if fam.wife == check:
                     count += 1
                 if count > 1:
-                    outputindList.remove(fam)
+                     if fam in outputindList:
+                         outputindList.remove(fam)
         return outputindList
+
 
     # US12 Parents not too old
     def validParentsage(self, indList, famList):
@@ -439,7 +442,7 @@ class gedHelper(object):
                         ind.sex ="F"
             return outputindList
 
-    # US22 Unique IDs and #US 24
+    # US22 Unique IDs
     def noUnique_IDs(self,indList):
         nouniquelist = []
         Idlist = []
@@ -473,23 +476,25 @@ class gedHelper(object):
         return famList
 
     def MultipleidsDelete(self,nouniquelist,indList):
-        for ind in indList:
+        for id_checks in nouniquelist:
             count = 1
-            for id_checks in nouniquelist:
+            for ind in indList:
                 if ind.indi == id_checks:
                         count += 1
                 if count > 2:
-                    indList.remove(ind)
+                    if ind in indList:
+                     indList.remove(ind)
         return indList
 
     def MultipleidsDelete2(self,nouniquelist,famList):
-        for fam in famList:
+        for id_checks in nouniquelist:
             count = 1
-            for id_checks in nouniquelist:
+            for fam in famList:
                 if  fam.famid == id_checks:
                         count += 1
                 if count > 2:
-                    famList.remove(fam)
+                    if fam in famList:
+                     famList.remove(fam)
         return famList
 
  
@@ -585,16 +590,16 @@ class gedHelper(object):
     def multiplebirths(self, indList, famList):
         singlebirth = []
         multiplebirth = []
-        count = 0
         for ind in indList:
             singlebirth.append(ind.birth)
-        set(singlebirth)
+        singlebirth = set(singlebirth)
         for single in singlebirth:
+            count = 0
             for ind in indList:
                 if ind.birth == single:
                     count +=1
-                if count > 1:
-                    multiplebirth.append(ind.name)
+                    if count > 1:
+                     multiplebirth.append(ind.name)
         return multiplebirth      
 
     #US33 List orphans

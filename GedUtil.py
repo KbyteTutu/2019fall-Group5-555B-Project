@@ -1,19 +1,53 @@
 import datetime
+from datetime import date
+from datetime import timedelta
 
 class gedUtil(object):
 
     def __init__(self):
         pass
     
+
+    def InvalidDate(self):
+        error = "ERROR: INVALID DATE"
+        return error
+
     def getAge(self,person):
         try:
             temp = person.birth
             if (temp != "not mentioned"):
-                birthYear = datetime.datetime.strptime(temp,'%d %b %Y').year
-                currentYear = datetime.datetime.now().year
-                return currentYear-birthYear
+                try:
+                    birthYear = datetime.datetime.strptime(temp,'%d %b %Y').year
+                    currentYear = datetime.datetime.now().year
+                    return currentYear-birthYear
+                except:
+                    return gedUtil().InvalidDate()
             else:
                 return None
+        except:
+            print("Wrong Input")
+    
+    #Used for U37
+    def dateLessThanThirtyDays(self,date1):
+        try:
+            a = datetime.datetime.strptime(date1,'%d %m %Y')
+            b = datetime.datetime.now()
+            c = b - a
+            return c.days <= 30
+        except:
+            print("Wrong Input")
+
+    #Used for U38
+    def dateWithin30Days(self,ind):
+        try:
+            birthMonth = datetime.datetime.strptime(ind.birth,'%d %m %Y').month
+            birthDay = datetime.datetime.strptime(ind.birth,'%d %m %Y').day
+            birth = 0 + timedelta(birthMonth) + timedelta(birthDay)
+            checkMonth = datetime.datetime.now().month
+            checkDay = datetime.datetime.now().day
+            check = 0 + timedelta(checkMonth) + timedelta(checkDay)
+            result = check - birth
+            return result.days <= 30 and result.days > 0
         except:
             print("Wrong Input")
 
@@ -25,9 +59,14 @@ class gedUtil(object):
         except:
             print("Wrong Input")
 
+    # US40 Reject Illegitimate Dates
     def getDate(self,dateStr):
         if (dateStr != "not mentioned") and (dateStr is not None):
-            return datetime.datetime.strptime(dateStr,'%d %b %Y')
+            # If it cannot be converted to a datetime object, then it is an invalid date
+            try:
+                return datetime.datetime.strptime(dateStr,'%d %b %Y')
+            except:
+                return gedUtil().InvalidDate()
         else:
             return None
 
