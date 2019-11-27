@@ -15,6 +15,21 @@ class test_ged(unittest.TestCase):
     
     #Sb
 
+    def test_MaleLastNames(self):
+        indi1 = individual("No1", name="Husband1 Jones", sex="M", birth="10 OCT 1900", )
+        indi2 = individual("No2", name="Child1 Jones", sex="M", familyC="Child1 Jones", birth="10 OCT 1930")
+        indi3 = individual("No3", name="Husband2 Adams", sex="M", birth="11 OCT 1901")
+        #extra wrong child last name
+        indi4 = individual("No4", name="Child2 Tu", sex="M", familyC="Child2 Adams", birth="12 OCT 1932")
+        
+        fam1 = family("No1",  husband="Husband1 Jones", children="Child1 Jones")
+        fam2 = family("No2",  husband="Husband2 Adams", children="Child2 Adams")
+        indList = [indi1,indi2,indi3,indi4]
+        famList = [fam1,fam2]
+        self.assertTrue(gedHelper().MaleLastNames(indList,famList))
+     
+        
+    
     def test_FewerSiblings(self):
     
         indi1 = individual("No1", name="Zhang 1", birth="11 OCT 1900")
@@ -75,7 +90,7 @@ class test_ged(unittest.TestCase):
         famList = [fam1,fam2]
 
         famListOrigin = copy.deepcopy(famList)
-        famList = gedHelper().MultipleBirthsDelete(indList,famList)
+        famList = gedHelper().FewerSiblings(indList,famList)
          
     
 if __name__ == '__main__':
