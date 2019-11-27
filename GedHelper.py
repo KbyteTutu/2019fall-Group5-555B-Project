@@ -559,6 +559,13 @@ class gedHelper(object):
                 outputindList.remove(family)
                 break
         return outputindList
+    #US26 List all births in the GedCom file    
+    def listBirths(self,indList):
+        birth = []
+        for ind in indList:
+            if ind.birth != "not mentioned":
+                birth.append(ind)
+        return birth
 # /Sb
 # Cs
     # US27 Include person's current age when listing individuals.
