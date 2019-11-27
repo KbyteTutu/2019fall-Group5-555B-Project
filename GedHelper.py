@@ -359,6 +359,7 @@ class gedHelper(object):
     # US19 First Cousins Should Not Marry
 
     def cousinsMarried(self, indList, famList):
+        return_flag = True
         TempNoneIndi = individual("temp")
 
         for family in famList:
@@ -392,16 +393,20 @@ class gedHelper(object):
                 # Husband's mother is a sister to one of the wife's parents
                 if husband_mother.familyC == wife_mother.familyC or husband_mother.familyC == wife_father.familyC:
                     print(family.famid +"- First Cousins Should Not Marry")
+                    return_flag = False
 
             # Husband's father is a brother to one of the wife's parents
                 if husband_father.familyC == wife_mother.familyC or husband_father.familyC == wife_father.familyC:
                     print(family.famid +"- First Cousins Should Not Marry")
+                    return_flag = False
             except:
                 pass
+        return return_flag
 
 
     # US20 Aunts and Uncles
     def AuntsAndUncles(self, indList, famList):
+        return_flag = True
         util = gedUtil()
         TempNoneIndi = individual("temp")
         for family in famList:
@@ -436,10 +441,13 @@ class gedHelper(object):
                 # Wife is a sister to one of the husband's parents
                 if husband_mother.familyC == wife.familyC or husband_father == wife.familyC:
                      print(family.famid +"- Aunts and uncles should not marry their nieces or nephews")
+                     return_flag = False
 
                 # Husband is a brother to one of the wife's parents
                 if wife_mother.familyC == husband.familyC or wife_father == husband.familyC:
                     print(family.famid +"- Aunts and uncles should not marry their nieces or nephews")
+                    return_flag = False
             except:
                 pass
+        return return_flag
 # /Na
