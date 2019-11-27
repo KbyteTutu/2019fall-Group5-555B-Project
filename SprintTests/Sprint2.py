@@ -20,7 +20,7 @@ class test_ged(unittest.TestCase):
         indi2 = individual("No2", name="Child1 Jones", sex="M", familyC="Child1 Jones", birth="10 OCT 1930")
         indi3 = individual("No3", name="Husband2 Adams", sex="M", birth="11 OCT 1901")
         #extra wrong child last name
-        indi4 = individual("No4", name="Child2 Tu", sex="M", familyC="Child2 Adams", birth="12 OCT 1932")
+        indi4 = individual("No4", name="Child2 Tu", sex="M", familyC="Child2 Tu", birth="12 OCT 1932")
         
         fam1 = family("No1",  husband="Husband1 Jones", children="Child1 Jones")
         fam2 = family("No2",  husband="Husband2 Adams", children="Child2 Adams")
