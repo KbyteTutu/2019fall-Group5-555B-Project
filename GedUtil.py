@@ -24,32 +24,35 @@ class gedUtil(object):
                     return gedUtil().InvalidDate()
             else:
                 return None
-        except:
-            print("Wrong Input")
+        except Exception as e:
+            print("Wrong Input Age")
     
-    #Used for U37
+#Used for U37
     def dateLessThanThirtyDays(self,date1):
-        try:
-            a = datetime.datetime.strptime(date1,'%d %m %Y')
-            b = datetime.datetime.now()
-            c = b - a
-            return c.days <= 30
-        except:
-            print("Wrong Input")
+        if date1 != 'not mentioned':
+            try:
+                a = datetime.datetime.strptime(date1,'%d %b %Y')
+                b = datetime.datetime.now()
+                c = b - a
+                return c.days <= 30
+            except Exception as e:
+                print(str(e))
+        else:
+            return False
 
     #Used for U38
     def dateWithin30Days(self,ind):
         try:
-            birthMonth = datetime.datetime.strptime(ind.birth,'%d %m %Y').month
-            birthDay = datetime.datetime.strptime(ind.birth,'%d %m %Y').day
-            birth = 0 + timedelta(birthMonth) + timedelta(birthDay)
+            birthMonth = datetime.datetime.strptime(ind.birth,'%d %b %Y').month
+            birthDay = datetime.datetime.strptime(ind.birth,'%d %b %Y').day
+            birth = timedelta(birthMonth) + timedelta(birthDay)
             checkMonth = datetime.datetime.now().month
             checkDay = datetime.datetime.now().day
-            check = 0 + timedelta(checkMonth) + timedelta(checkDay)
+            check = timedelta(checkMonth) + timedelta(checkDay)
             result = check - birth
             return result.days <= 30 and result.days > 0
-        except:
-            print("Wrong Input")
+        except Exception as e :
+            print(str(e))
 
     def dateCompare(self,dateA,dateB):
         try:
@@ -57,7 +60,7 @@ class gedUtil(object):
             b = datetime.datetime.strptime(dateB,'%d %b %Y')
             return a.__gt__(b)
         except:
-            print("Wrong Input")
+            print("Wrong Input dateCompare")
 
     # US40 Reject Illegitimate Dates
     def getDate(self,dateStr):
@@ -77,5 +80,4 @@ class gedUtil(object):
                 re = person.birth
                 break
         return re
-
     

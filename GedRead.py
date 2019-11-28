@@ -1,11 +1,14 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 
+# @author Tu Kechao
+
 from GedMembers import Valid
 from GedMembers import individual
 from GedMembers import family
 from GedHelper import gedHelper
 from GedUtil import gedUtil
+from prettytable import PrettyTable
 
 import datetime
 import traceback
@@ -16,10 +19,14 @@ indList = []
 famList = []
 linedataList = []
 
+errorList = []
+
 indLength = 5000
 famLength = 1000
 
-def infoProcess(line:"Data line",type:"1 for indi 2 for fam"):# To get data in lines and store in a list
+
+# To get data in lines and store in a list
+def infoProcess(line: "Data line", type: "1 for indi 2 for fam"):
     ListTemp = copy.deepcopy(linedataList[0: -1])
     BlockList = []
     if type == 1:
@@ -28,14 +35,14 @@ def infoProcess(line:"Data line",type:"1 for indi 2 for fam"):# To get data in l
         Cond = 'FAM'
     else:
         RuntimeError
-    Count= 0
+    Count = 0
     # Label the individual
     for i in enumerate(ListTemp):
         if ListTemp[i[0]][3] == Cond:
             Count += 1
-        ListTemp[i[0]].insert(0,Count)
+        ListTemp[i[0]].insert(0, Count)
     # Save the Info Block
-    for j in range(1,Count+1):
+    for j in range(1, Count+1):
         tempBlock = []
         for item in ListTemp:
             if item[0] is j:
@@ -44,16 +51,13 @@ def infoProcess(line:"Data line",type:"1 for indi 2 for fam"):# To get data in l
                 break
         BlockList.append(tempBlock)
     # Get the Info From Block
-    if type==1:
+    if type == 1:
         getIndInfoFromBlocks(BlockList)
-    elif type ==2:
+    elif type == 2:
         getFamInfoFromBlocks(BlockList)
 
 
-
-
-
-def isValid(level:"tag level", tag:"tag name") -> str:
+def isValid(level: "tag level", tag: "tag name") -> str:
     if tag in Valid:
         if level == str(Valid[tag]):
             return "Y"
@@ -61,6 +65,7 @@ def isValid(level:"tag level", tag:"tag name") -> str:
             return "N"
     else:
         return "N"
+
 
 def getNameByIndi(indi):
     re = "Not Mentioned"
@@ -78,15 +83,16 @@ def readGed(file):
         gedLines = myGed.readlines()
         gedLines.append("END END END")
         for line in gedLines:
-            #Do line cut and store the whole line
+            # Do line cut and store the whole line
             line = line + " "
-            linedata = [line[0:1], line[2:line.index(" ", 2)], "Valid", line[line.index(" ", 2) + 1:-1]]
+            linedata = [line[0:1], line[2:line.index(
+                " ", 2)], "Valid", line[line.index(" ", 2) + 1:-1]]
             linedata[2] = isValid(linedata[0], linedata[1])
-            linedata[3] = linedata[3].replace("\n","")
+            linedata[3] = linedata[3].replace("\n", "")
             linedataList.append(linedata)
 
-        infoProcess(linedataList,1)
-        infoProcess(linedataList,2)
+        infoProcess(linedataList, 1)
+        infoProcess(linedataList, 2)
         myGed.close()
     except:
         print("Invalid file")
@@ -100,29 +106,34 @@ def getIndInfoFromBlocks(blocks):
     for infoBlock in blocks:
         if len(indList) < indLength:
             tempIndi = individual(None)
-            for index,infoLine in enumerate(infoBlock):
+            for index, infoLine in enumerate(infoBlock):
                 # deal with properties here
                 if infoLine[4] == 'INDI':
-                    tempIndi.indi = infoLine[2]#Kt
+                    tempIndi.indi = infoLine[2]  # Kt
+                if infoLine[2] == 'SEX':
+                    tempIndi.sex = infoLine[4]  # Kt
                 if infoLine[2] == 'NAME':
-                    tempIndi.name = infoLine[4]#Kt
+                    tempIndi.name = infoLine[4]  # Kt
                 if infoLine[2] == 'BIRT\n':
-                    tempIndi.birth = datetime.datetime.strftime(gedUtil().getDate(infoBlock[index+1][4]), "'%d %b %Y'")#Kt
+                    tempIndi.birth = datetime.datetime.strftime(
+                        gedUtil().getDate(infoBlock[index+1][4]), '%d %b %Y')  # Kt
                 if infoLine[2] == 'DEAT':
-                    tempIndi.death = datetime.datetime.strftime(gedUtil().getDate(infoBlock[index+1][4]), "'%d %b %Y'")#Kt
+                    tempIndi.death = datetime.datetime.strftime(
+                        gedUtil().getDate(infoBlock[index+1][4]), '%d %b %Y')  # Kt
                 if infoLine[2] == 'FAMC':
-                    tempIndi.familyC = infoLine[4]#Na
-                #if infoLine[2] == 'FAMS':
+                    tempIndi.familyC = infoLine[4]  # Na
+                # if infoLine[2] == 'FAMS':
                    # tempIndi.familyS.append(infoLine[4])
             indList.append(tempIndi)
         else:
             print("Maximum amount of individuals stored!\n")
 
+
 def getFamInfoFromBlocks(blocks):
     for infoBlock in blocks:
         if len(famList) < famLength:
             tempFam = family(None)
-            for index,infoLine in enumerate(infoBlock):
+            for index, infoLine in enumerate(infoBlock):
                 if infoLine[4] == 'FAM':
                     tempFam.famid = infoLine[2]
                 if infoLine[2] == 'HUSB':
@@ -132,152 +143,201 @@ def getFamInfoFromBlocks(blocks):
                 if infoLine[2] == 'CHIL':
                     tempFam.children.append(infoLine[4])
                 if infoLine[2] == 'MARR\n':
-                    tempFam.marDate = datetime.datetime.strftime(gedUtil().getDate(infoBlock[index+1][4]), "'%d %b %Y'")
+                    tempFam.marDate = datetime.datetime.strftime(
+                        gedUtil().getDate(infoBlock[index+1][4]), '%d %b %Y')
                 if infoLine[2] == '_SEPR\n':
-                    tempFam.divDate = datetime.datetime.strftime(gedUtil().getDate(infoBlock[index+1][4]), "'%d %b %Y'")
+                    tempFam.divDate = datetime.datetime.strftime(
+                        gedUtil().getDate(infoBlock[index+1][4]), '%d %b %Y')
             famList.append(tempFam)
         else:
             print("Maximum amount of families stored!\n")
-    #Search the name for them and add
+    # Search the name for them and add
     for fam in famList:
         for person in indList:
-            if  person.indi == fam.husband:
+            if person.indi == fam.husband:
                 fam.husbandN = person.name
                 person.marDate = fam.marDate
                 person.divDate = fam.divDate
-            if  person.indi == fam.wife:
+                person.wifeID = fam.wife
+            if person.indi == fam.wife:
                 fam.wifeN = person.name
                 person.marDate = fam.marDate
                 person.divDate = fam.divDate
-
-
+                person.husbID = fam.husband
 
 
 # In this method we process individuals List with all those US
 # Cuz some data will add to individual after reading the family infos
 # We have to do data processing in seperate.
-def gedHelperIndProcess()-> list:
-    Log = "Operation Log: "
+def gedHelperIndProcess() -> list:
     try:
         gh = gedHelper()
-        #prefix age
-        for i in indList:
-            i.age = gh.LoadAgeForPerson(i)
         outputindList = copy.deepcopy(indList)
-#       outputindList = gh.noUnique_IDs(outputindList)
-#       famList = gh.noUnique_famIDs(famList)
-        outputindList = gh.UniqueNameAndBirth(outputindList)
-        outputindList = gh.correctGender(outputindList,famList)
+        #US12
+        errorList.append(gh.validParentsage(indList,famList))
         for i in indList:
             if gh.datebeforeCurrentdate(i) == False:
-                outputindList.remove(i)
+                Log = "datebeforeCurrentdate - " + i.indi
+                errorList.append(Log)
                 continue
             if gh.birthBeforeMarriage(i) == False:
-                Log = Log + "[birthBeforeMarriage on " + i.indi + " ]"
-                outputindList.remove(i)
-                continue #if current item deleted,we dont need to go further
+                Log = "birthBeforeMarriage - " + i.indi
+                errorList.append(Log)
+                continue  # if current item deleted,we dont need to go further
             if gh.birthBeforeDeath(i) == False:
-                Log = Log + "[birthBeforeDeath on " + i.indi + " ]"
-                outputindList.remove(i)
+                Log = "birthBeforeDeath - " + i.indi
+                errorList.append(Log)
                 continue
             if gh.marriageBeforeDivorce(i) == False:
-                Log = Log + "[marriageBeforeDivorce on " + i.indi + " ]"
-                outputindList.remove(i)
+                Log = "marriageBeforeDivorce - " + i.indi
+                errorList.append(Log)
                 continue
             if gh.marriageBeforeDeath(i) == False:
-                Log = Log + "[marriageBeforeDeath on " + i.indi + " ]"
-                outputindList.remove(i)
+                Log = "marriageBeforeDeath - " + i.indi
+                errorList.append(Log)
                 continue
             if gh.divorceBeforeDeath(i) == False:
-                Log = Log + "[divorceBeforeDeath on " + i.indi + " ]"
-                outputindList.remove(i)
+                Log = "divorceBeforeDeath - " + i.indi
+                errorList.append(Log)
                 continue
-            
-            #if gh.lessThan150Years(i) == False:
-            #   outputindList.remove(i)
+
+            # if gh.lessThan150Years(i) == False:
+            #   errorList.append(Log)
+
+        gh.correctGender(indList,famList)
+        gh.noUnique_IDs(indList)
+        gh.noUnique_famIDs(famList)
+        gh.UniqueNameAndBirth(indList)
+        
+        gh.livingMarried(indList,famList)
+        
 
         return outputindList
     except Exception:
-        print(Log)
+        print("Bug")
         print(traceback.format_exc())
 
-def gedHelperFamProcess()-> list:
+
+def gedHelperFamProcess() -> list:
     gh = gedHelper()
     outputfamList = copy.deepcopy(famList)
-    outputfamList = gh.UniqueFamily(outputfamList)
-    outputfamList = gh.MultipleBirthsDelete(indList,outputfamList)
-    outputfamList = gh.nobigamy(indList,outputfamList)
-    #gh.validParentsage(indList,outputfamList)
+    outputfamList = gh.nobigamy(indList,famList)
+    outputfamList = gh.MultipleBirthsDelete(indList,famList)
+    outputfamList = gh.SiblingsSpacing(indList,famList)
+    gh.marriageToDescendant(indList,famList)
+    gh.siblingsMarried(indList,famList)
+    gh.AuntsAndUncles(indList,famList)
+    gh.UniqueFamily(famList)
+    gh.UniqueChildName(famList,indList)
 
     return outputfamList
 
 
+def ListStuff():
+    gh = gedHelper()
+    print("Anniversary:")
+    gh.Anniversary(famList)
+    print("listDeceased:")
+    gh.listDeceased(indList)
+    print("upcomingBirthdays:")
+    gh.upcomingBirthdays(indList)
+    print("recentSurvivors:")
+    gh.recentSurvivors(indList,famList)
+    print("recentBirthdays:")
+    gh.recentBirthdays(indList)
+    print("recentDeaths:")
+    gh.recentDeaths(indList)
+
+    print("listLargeAgeDifference:")
+    gh.listLargeAgeDifference(indList,famList)
+    print("listOrphans")
+    gh.listOrphans(indList)
+   
+    gh.livingsingle(indList,famList)
+
+    a =  gh.multiplebirths(indList,famList)
+    print("multibirth:")
+    for i in a:
+        print(i,end=",")
 
 def GedReader(file):
     readGed(file)
+    #prefix age
+    for i in indList:
+        i.age = gedHelper().LoadAgeForPerson(i)
     # gedHelper().validate_family(indList,famList)
-    gedHelper().validBirth(indList,famList)
-    gedHelper().validMarriage(indList,famList)
-    outputindList = gedHelperIndProcess()
-    outputfamList = gedHelperFamProcess()
+    outputindList = copy.deepcopy(indList)
+    outputfamList = copy.deepcopy(famList)
+    
+
+    print("=====Origin Individual List Table=====")
+    indiTable = PrettyTable(["indi",
+                             "name",
+                             "sex",
+                             "birth",
+                             "death",
+                             # "marrigeDate",
+                             # "divorceDate",
+                             "family",
+                             "husbID",
+                             "wifeID",
+                             # "familyC",
+                             # "age",
+                             # "orphan"
+                             ])
 
     if outputindList is not None:
-        # here is the out put
-        print("=====Individuals=====")
-        for i in outputindList:
-            i.printBriefInfo()
-        # print("=====Deceased=====")
-        # dead = gedHelper().getDeceased(outputindList)
-        # for d in dead:
-        #     print(d)
+        for person in outputindList:
+            indiTable.add_row([person.indi,
+                               person.name,
+                               person.sex,
+                               person.birth,
+                               person.death,
+                               # person.marDate,
+                               # person.divDate,
+                               person.family,
+                               person.husbID,
+                               person.wifeID,
+                               # person.familyC,
+                               # person.age,
+                               # person.orphan
+                               ])
+
+        print(indiTable)
+
+    print("=====Origin Family List Table=====")
     if outputindList is not None:
-        print("=====Family=====")
-        for j in outputfamList:
-            print("FamilyID:"+j.famid+ " Husband Name:"+ getNameByIndi(j.husband) + " Wife Name:" + getNameByIndi(j.wife))
-            print("Children: ")
-            children = gedHelper().orderSibling(indList,j)
-            for x in range(len(children)):
-                print(children[x].name)
-        print("=====Anniversaries=====")
-        gedHelper().Anniversary(outputfamList)
-    if outputindList is not None:
-        print("=====Recent Survivors=====")
-        gedHelper().recentSurvivors(outputindList, outputfamList)
-        print("=====Upcoming Birthdays=====")
-        gedHelper().upcomingBirthdays(outputindList)
-        print("=====Living Couples=====")
-        live = gedHelper().livingMarried(outputindList, outputfamList)
-        for l in live:
-            print(l)
-        if gedHelper().AuntsAndUncles(outputindList, outputfamList) is False:
-            print("WARNING: Invalid marriage between an uncle/aunt with their niece/nephew")
-        if gedHelper().cousinsMarried(outputindList, outputfamList) is False:
-            print("WARNING: Invalid marriage between first cousins")
-        if gedHelper().validMarriage(outputindList, outputfamList) is False:
-            print("WARNING: Invalid age for marriage")
-        if gedHelper().validBirth(outputindList, outputfamList) is False:
-            print("WARNING: Invalid birth date")
-    if outputindList is not None:
-        print("=====Multiple Births======")
-        multipes = gedHelper().multiplebirths(outputindList, outputfamList)
-        for m in multipes:
-            print(m + " is Multiple Births")
-    if outputindList is not None:
-        print("=====Living Single======")
-        livingsing = gedHelper().livingsingle(outputindList)
-        for l in livingsing:
-            print(l + " is living single")
-    if outputindList is not None:
-        print("=====Orphans List======")
-        orphansList = gedHelper().listOrphans(outputindList)
-        for l in orphansList:
-            print(l + " is orphan")
-    if outputindList is not None:
-        print("=====List large age differences======")
-        largeDifferList = gedHelper().listLargeAgeDifference(outputindList,famList)
-        for f in largeDifferList:
-            print(f + " has large age differences")
+        famTable = PrettyTable([
+            "famid",
+            "husband",
+            "wife",
+            "marDate",
+            "divDate"
+        ])
+        for family in outputfamList:
+            famTable.add_row([
+                family.famid,
+                family.husband,
+                family.wife,
+                family.marDate,
+                family.divDate
+            ])
+        print(famTable)
+    print("=====Error List=====")
+
+    gedHelper().validBirth(indList, famList)
+    gedHelper().validMarriage(indList, famList)
+    outputindList = gedHelperIndProcess()
+    outputfamList = gedHelperFamProcess()
+    for error in errorList:
+        print(error)
+
+    print("=====List Things=====")
+    ListStuff()
+    
+
+    
 
 
 if __name__ == '__main__':
-    GedReader(".\\TestGed\\MultiChild.ged")
+    GedReader(".\\TestGed\\Group 5 GED.ged")
