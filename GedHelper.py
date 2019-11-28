@@ -551,7 +551,7 @@ class gedHelper(object):
 
             for child in family.children:
                 for ind in indList:
-                    if ind.indi == family.children:
+                    if ind.indi == child:
                         child == ind
                         childName.append(child.name)
 
@@ -559,6 +559,7 @@ class gedHelper(object):
                 outputindList.remove(family)
                 break
         return outputindList
+
     #US26 List all births in the GedCom file    
     def listBirths(self,indList):
         birth = []

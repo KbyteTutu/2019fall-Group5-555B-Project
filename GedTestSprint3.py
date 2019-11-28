@@ -61,6 +61,54 @@ class test_ged(unittest.TestCase):
 
         self.assertTrue(len(gedHelper().UniqueFamily(famList))== 1)
         self.assertTrue(len(gedHelper().UniqueFamily(famListDifferent))== 2)
+    #Sb
+    def test_UniqueChildName(self):
+        indi1 = individual("No1", name="Child1 Jones", familyC="Child1 Jones",birth='10 OCT 1900')
+        indi2 = individual("No2", name="Child2 Jones", familyC="Child2 Jones", birth='10 OCT 1901')
+        indi3 = individual("No3", name="Child3 Adams", familyC="Child3 Adams", birth='11 OCT 1901')
+        #extra same child first name
+        indi4 = individual("No4", name="Child3 Adams", familyC="Child3 Adams", birth='12 OCT 1901')
+        
+        fam1 = family("No1")
+        fam1.children.append(indi1.indi)
+        fam1.children.append(indi2.indi)
+        fam2 = family("No2")
+        fam1.children.append(indi3.indi)
+        fam1.children.append(indi4.indi)
+        
+        indList = [indi1,indi2,indi3,indi4]
+        famList = [fam1,fam2]
+        self.assertTrue(gedHelper().UniqueChildName(indList,famList))
+
+
+        # He doesn't have time to correct this.
+       
+    def test_listBirths(self):
+        individuals = []
+        
+        indi_1 = individual("1", name = "Test", birth = "14 SEPT 1996", family="1")
+        indi_2 = individual("2", name = "Test2", birth = "15 SEPT 1996",family="1")
+        indi_3 = individual("3", name = "Test3", birth = "16 SEPT 2019" ,family="2")
+        individuals.append(indi_1)
+        individuals.append(indi_2)
+        individuals.append(indi_3)
+        
+        self.assertEqual(individuals, gedHelper().listBirths(individuals))
+    #Cs
+        #US27
+    def test_include_ind_age(self):
+        indi1 = individual("No1", birth="2 NOV 1995")
+        output = gedUtil().getAge(indi1)
+        self.assertTrue(output == 24)
+
+    #US28
+    def test_order_siblings_by_age(self):
+        indi1 = individual("No1", name="Child1", family="1", birth="1 JAN 1995")
+        indi2 = individual("No2", name="Child2", family="1", birth="1 JAN 1996")
+        indi3 = individual("No3", name="Child3", family="1", birth="1 JAN 1994")
+        fam1 = family("1", children=[indi1.indi, indi2.indi, indi3.indi])
+        indList1 = [indi1, indi2, indi3]
+        gedHelper().orderSibling(indList1, fam1)
 
     #Na
     def test_ListDeceased(self):
