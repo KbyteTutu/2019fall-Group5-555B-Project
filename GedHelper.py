@@ -293,7 +293,7 @@ class gedHelper(object):
         util = gedUtil()
         outputindList = copy.deepcopy(famList)
         for fam in famList:
-            if fam.children.count > 15:
+            if len(fam.children)> 15:
                 outputindList.remove(fam)
         return outputindList
 
@@ -318,7 +318,7 @@ class gedHelper(object):
 # Sb
 
 # Cs
-    # US17 No marriage to descendants
+#US17 No marriage to descendants
     def marriageToDescendant(self, indList, famList):
         for ind in indList:
             if ind.family != "not mentioned":
@@ -326,33 +326,37 @@ class gedHelper(object):
                     fatherID = []
                     motherID = []
                     descendantID = []
-                    for ind in ind.family:
-                        if family.famid == ind.family:
+                    for ind in indList:
+                        if str(family.famid) == str(ind.family):
                             fatherID.append(family.husband)
                             motherID.append(family.wife)
                             descendantID.append(ind)
                     for ind in descendantID:
                         for i in fatherID:
                             if ind.husbID == i:
-                                print(ind + " is married to an ancestor")
+                                print(ind, " is married to an ancestor")
+                                return False
                         for i in motherID:
                             if ind.wifeID == i:
-                                print(ind + " is married to an ancestor")
+                                print(ind, " is married to an ancestor")
+                                return False
+        return True
 
 
-    # US18 Siblings should not marry
-
+    #US18 Siblings should not marry
     def siblingsMarried(self, indList, famList):
         for fam in famList:
             childrenList = []
             for ind in indList:
                 for child in fam.children:
                     if ind.indi == child:
-                        childrenList.append(ind)
+                        childrenList.append(ind)        
             for i in childrenList:
                 for j in childrenList:
                     if (i.husbID == j.indi or i.wifeID == j.indi or i.indi == j.husbID or i.indi == j.wifeID):
-                        print(i + " and " + j + " are married siblings.")
+                        print(i, " and ", j, " are married siblings.")
+                        return False
+        return True
 
 # /Cs
 # Na
