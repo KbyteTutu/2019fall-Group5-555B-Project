@@ -52,7 +52,24 @@ class test_ged(unittest.TestCase):
         indiWrong = individual("No2", name="Li Four", divorceDate="14 SEP 1997", death="14 SEP 1996")
         self.assertTrue(gedHelper().divorceBeforeDeath(indiRight))
         self.assertFalse(gedHelper().divorceBeforeDeath(indiWrong))
+    
+    #Cs
+        #US07
+    def test_less_than_150_years(self):
+        indi1 = individual("No1", name="Old", birth="1 JAN 1800")
+        output = gedHelper().lessThan150Years(indi1)
+        self.assertTrue(output == False)
 
+    #US08
+    def test_birth_before_marriage(self):
+        indi1 = individual("No1", name="Mother", husbID="No2", marrigeDate="1 OCT 1990", family="1", familyC="1")
+        indi2 = individual("No2", name="Father", wifeID="No1", marrigeDate="1 OCT 1990", family="1", familyC="1")
+        indi3 = individual("No3", name="Child", birth="2 OCT 1990", family="1", familyC="1")
+        fam1 = family("1", husband="No2", wife="No1")
+        indList1 = [indi1, indi2, indi3]
+        famList1 = [fam1]
+        output = gedHelper().validMarriage(indList1, famList1)
+        self.assertTrue(output == True)
     #Na
     def test_validBirth(self):
         individuals = []
@@ -66,7 +83,7 @@ class test_ged(unittest.TestCase):
         individuals.append(indi_3)
         fam_1 = family("1", husband= "1", wife= "2", children= ["3"], marDate= "14 SEPT 2018")
         families.append(fam_1)
-        self.assertFalse(gedHelper().validBirth(individuals,families))
+        self.assertTrue(gedHelper().validBirth(individuals,families))
         individuals.pop()
         families.pop()
         indi_4 = individual("3", name = "Test3", birth = "16 SEPT 2018")
@@ -85,7 +102,7 @@ class test_ged(unittest.TestCase):
         individuals.append(indi_2)
         fam_1 = family("1", husband= "1", wife= "2", marDate= "14 SEPT 2018")
         families.append(fam_1)
-        self.assertFalse(gedHelper().validMarriage(individuals,families))
+        self.assertTrue(gedHelper().validMarriage(individuals,families))
         individuals.pop()
         families.pop()
         indi_4 = individual("2", name = "Test2", birth = "15 SEPT 1996", death = "15 SEPT 2019", marrigeDate="14 SEPT 2018", family="1")
